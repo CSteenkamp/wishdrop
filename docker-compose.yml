@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: wishdrop-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wishdrop
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-WishDrop2024DBPass}
+      POSTGRES_DB: wishdrop
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wishdrop"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wishdrop-app
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - DATABASE_URL=postgresql://wishdrop:${DB_PASSWORD:-WishDrop2024DBPass}@db:5432/wishdrop?schema=public
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["node", "server.js"]
+
+volumes:
+  postgres_data:
+    driver: local

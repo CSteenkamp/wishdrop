@@ -1,0 +1,102 @@
+// WishDrop - Gift Registry Platform
+// https://wishdrop.wagnerway.co.za
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// A registry represents a gift registry/wishlist for any occasion
+model Registry {
+  id             String   @id @default(cuid())
+  name           String   // "Sarah's Birthday Wishlist"
+  inviteCode     String   @unique  // Unique code for people to join this registry
+  occasion       String   @default("other") // birthday, wedding, baby_shower, christmas, housewarming, graduation, other
+  eventDate      DateTime? // Optional event date
+  coverImage     String?  // Optional cover image URL
+  description    String?  // Optional description
+  plan           String   @default("free") // free, unlimited
+  budgetAmount   Float?   // Optional budget amount
+  budgetCurrency String   @default("USD") // Currency code
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  participants Participant[]
+  adminConfig  AdminConfig?
+  subscription Subscription?
+
+  @@map("Group")
+}
+
+model Participant {
+  id         String   @id @default(cuid())
+  registryId String   @map("groupId") // Links this participant to their registry
+  name       String
+  email      String?  // Optional email for magic link login
+  loginCode  String   // Unique within this participant's context
+  createdAt  DateTime @default(now())
+
+  registry      Registry       @relation(fields: [registryId], references: [id], onDelete: Cascade)
+  wishlistItems WishlistItem[]
+
+  @@unique([registryId, loginCode])
+  @@unique([registryId, email])
+  @@index([registryId])
+  @@index([loginCode])
+  @@index([email])
+  @@map("Person")
+}
+
+model WishlistItem {
+  id            String   @id @default(cuid())
+  participantId String   @map("personId")
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  title         String
+  link          String   @default("")
+  imageUrl      String?  // Optional image URL
+  price         Float?   // Optional price
+  currency      String   @default("USD")
+  priority      String   @default("medium") // low, medium, high
+  order         Int
+  claimedById   String?  // ID of the participant who claimed this item
+  claimedByName String?  // Name of who claimed (for display)
+  claimedAt     DateTime? // When it was claimed
+  createdAt     DateTime @default(now())
+
+  @@index([participantId])
+}
+
+model AdminConfig {
+  id             String   @id @default(cuid())
+  registryId     String   @unique @map("groupId") // Each registry has its own admin
+  hashedPassword String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  registry Registry @relation(fields: [registryId], references: [id], onDelete: Cascade)
+
+  @@map("AdminConfig")
+}
+
+model Subscription {
+  id                     String    @id @default(cuid())
+  registryId             String    @unique @map("groupId")
+  stripeCustomerId       String?
+  stripeSubscriptionId   String?   @unique
+  plan                   String    @default("free") // free, unlimited
+  status                 String    @default("active") // active, canceled, past_due, unpaid
+  currentPeriodEnd       DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  registry Registry @relation(fields: [registryId], references: [id], onDelete: Cascade)
+
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
+}

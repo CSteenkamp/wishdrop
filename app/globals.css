@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #F8FAFC;
+  --foreground: #0F0A1A;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0F0A1A;
+    --foreground: #F8FAFC;
+  }
+}
+
+html, body {
+  overflow-x: hidden;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* WishDrop gradient backgrounds */
+.wd-gradient {
+  background: linear-gradient(135deg, #F43F5E 0%, #8B5CF6 50%, #F59E0B 100%);
+}
+
+.wd-gradient-text {
+  background: linear-gradient(135deg, #F43F5E 0%, #8B5CF6 50%, #F59E0B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.wd-bg-dark {
+  background: linear-gradient(180deg, #0F0A1A 0%, #1A1128 50%, #0F0A1A 100%);
+}
+
+/* Card glow effect */
+.card-glow {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.08), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.card-glow:hover {
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.15), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Button styles */
+.btn-primary {
+  @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105;
+  @apply bg-gradient-to-r from-wd-coral to-wd-purple text-white;
+}
+
+.btn-coral {
+  @apply bg-wd-coral text-white hover:bg-wd-coral-dark;
+}
+
+.btn-purple {
+  @apply bg-wd-purple text-white hover:bg-wd-purple-dark;
+}
+
+.btn-gold {
+  @apply bg-wd-gold text-wd-dark hover:bg-wd-gold-dark;
+}
