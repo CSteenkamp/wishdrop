@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#C9A96E"/>
+  <g transform="translate(256, 256)">
+    <!-- ribbon -->
+    <rect x="-12.288" y="-138.24" width="24.576" height="276.48" fill="#FFFFFF" rx="2"/>
+    <rect x="-138.24" y="-12.288" width="276.48" height="24.576" fill="#FFFFFF" rx="2"/>
+    <!-- box bottom -->
+    <rect x="-107.52" y="0" width="215.04" height="107.52" fill="#FFFFFF" rx="8"/>
+    <!-- box lid -->
+    <rect x="-122.88" y="-46.08" width="245.76" height="55.296" fill="#FFFFFF" rx="6"/>
+    <!-- bow -->
+    <ellipse cx="-36.864" cy="-76.8" rx="30.72" ry="24.576" fill="#FFFFFF" transform="rotate(-20)"/>
+    <ellipse cx="36.864" cy="-76.8" rx="30.72" ry="24.576" fill="#FFFFFF" transform="rotate(20)"/>
+  </g>
+</svg>
