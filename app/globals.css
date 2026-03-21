@@ -3,15 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background: #F8FAFC;
-  --foreground: #0F0A1A;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0F0A1A;
-    --foreground: #F8FAFC;
-  }
+  --background: #FFFFFF;
+  --foreground: #2D2D2D;
 }
 
 html, body {
@@ -32,46 +25,31 @@ body {
   }
 }
 
-/* WishDrop gradient backgrounds */
-.wd-gradient {
-  background: linear-gradient(135deg, #F43F5E 0%, #8B5CF6 50%, #F59E0B 100%);
-}
-
+/* WishDrop gold accent text */
 .wd-gradient-text {
-  background: linear-gradient(135deg, #F43F5E 0%, #8B5CF6 50%, #F59E0B 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #C9A96E;
 }
 
-.wd-bg-dark {
-  background: linear-gradient(180deg, #0F0A1A 0%, #1A1128 50%, #0F0A1A 100%);
-}
-
-/* Card glow effect */
+/* Card shadow effect */
 .card-glow {
-  box-shadow: 0 0 15px rgba(139, 92, 246, 0.08), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .card-glow:hover {
-  box-shadow: 0 0 25px rgba(139, 92, 246, 0.15), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 /* Button styles */
 .btn-primary {
   @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105;
-  @apply bg-gradient-to-r from-wd-coral to-wd-purple text-white;
-}
-
-.btn-coral {
-  @apply bg-wd-coral text-white hover:bg-wd-coral-dark;
-}
-
-.btn-purple {
-  @apply bg-wd-purple text-white hover:bg-wd-purple-dark;
+  @apply bg-wd-gold text-white hover:bg-wd-gold-dark;
 }
 
 .btn-gold {
-  @apply bg-wd-gold text-wd-dark hover:bg-wd-gold-dark;
+  @apply bg-wd-gold text-white hover:bg-wd-gold-dark;
+}
+
+.btn-outline-gold {
+  @apply bg-white text-wd-gold border-2 border-wd-gold hover:bg-wd-cream;
 }

@@ -64,14 +64,14 @@ export default function JoinRegistry() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-wd-dark p-4">
-      <div className="bg-wd-dark-card p-8 rounded-2xl border border-white/10 card-glow w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-wd-cream p-4">
+      <div className="bg-white p-8 rounded-2xl border border-wd-border card-glow w-full max-w-md">
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">🎁</div>
-          <h1 className="text-3xl font-bold wd-gradient-text mb-2 font-display">
+          <h1 className="text-3xl font-bold text-wd-heading mb-2 font-display tracking-wide">
             Join a Registry
           </h1>
-          <p className="text-gray-400 text-sm">
+          <p className="text-wd-charcoal/50 text-sm">
             Enter the invite code you received
           </p>
         </div>
@@ -79,7 +79,7 @@ export default function JoinRegistry() {
         {!registryInfo ? (
           <form onSubmit={handleVerifyCode} className="space-y-4">
             <div>
-              <label htmlFor="inviteCode" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="inviteCode" className="block text-sm font-medium text-wd-charcoal mb-2">
                 Invite Code
               </label>
               <input
@@ -87,18 +87,18 @@ export default function JoinRegistry() {
                 id="inviteCode"
                 value={inviteCode}
                 onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                className="w-full px-4 py-3 bg-wd-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-wd-purple focus:border-transparent text-center font-mono text-2xl tracking-wider text-wd-snow"
+                className="w-full px-4 py-3 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-center font-mono text-2xl tracking-wider text-wd-heading"
                 placeholder="XXXXXX"
                 maxLength={6}
                 required
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-wd-charcoal/40 mt-1">
                 6-character code provided by the registry owner
               </p>
             </div>
 
             {error && (
-              <div className="bg-wd-coral/10 border border-wd-coral/30 text-wd-coral px-4 py-3 rounded-lg">
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
                 {error}
               </div>
             )}
@@ -106,36 +106,36 @@ export default function JoinRegistry() {
             <button
               type="submit"
               disabled={loading || inviteCode.length !== 6}
-              className="w-full bg-gradient-to-r from-wd-coral to-wd-purple text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transform"
+              className="w-full bg-wd-gold text-white py-3 rounded-xl font-semibold hover:bg-wd-gold-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transform"
             >
               {loading ? "Verifying..." : "Continue"}
             </button>
           </form>
         ) : (
           <div className="space-y-6">
-            <div className="bg-wd-purple/10 border border-wd-purple/30 p-4 rounded-lg">
-              <h2 className="font-semibold text-wd-purple mb-1">
+            <div className="bg-wd-gold/10 border border-wd-gold/30 p-4 rounded-lg">
+              <h2 className="font-semibold text-wd-gold mb-1">
                 {occasionEmoji[registryInfo.occasion] || "🎁"} Registry Found!
               </h2>
-              <p className="text-wd-snow">{registryInfo.name}</p>
-              <p className="text-sm text-gray-400 capitalize">{registryInfo.occasion.replace('_', ' ')}</p>
+              <p className="text-wd-heading">{registryInfo.name}</p>
+              <p className="text-sm text-wd-charcoal/50 capitalize">{registryInfo.occasion.replace('_', ' ')}</p>
             </div>
 
             <div className="space-y-3">
-              <p className="text-sm text-gray-300 text-center font-medium">
+              <p className="text-sm text-wd-charcoal text-center font-medium">
                 How would you like to continue?
               </p>
 
               <button
                 onClick={() => handleProceed("participant")}
-                className="w-full bg-gradient-to-r from-wd-coral to-wd-purple text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all duration-300 hover:scale-105 transform"
+                className="w-full bg-wd-gold text-white py-3 rounded-xl font-semibold hover:bg-wd-gold-dark transition-all duration-300 hover:scale-105 transform"
               >
                 Participant Login
               </button>
 
               <button
                 onClick={() => handleProceed("admin")}
-                className="w-full bg-white/10 text-wd-snow py-3 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300 border border-white/10"
+                className="w-full bg-white text-wd-charcoal py-3 rounded-xl font-semibold hover:bg-wd-cream transition-all duration-300 border border-wd-border"
               >
                 Admin Portal
               </button>
@@ -144,7 +144,7 @@ export default function JoinRegistry() {
         )}
 
         <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-400 hover:text-wd-gold transition-colors">
+          <Link href="/" className="text-sm text-wd-charcoal/50 hover:text-wd-gold transition-colors">
             &larr; Back to Home
           </Link>
         </div>

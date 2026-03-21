@@ -82,21 +82,21 @@ export default function CreateRegistry() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-wd-dark p-4">
-      <div className="bg-wd-dark-card p-8 rounded-2xl border border-white/10 card-glow w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-wd-cream p-4">
+      <div className="bg-white p-8 rounded-2xl border border-wd-border card-glow w-full max-w-md">
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">✨</div>
-          <h1 className="text-3xl font-bold wd-gradient-text mb-2 font-display">
+          <h1 className="text-3xl font-bold text-wd-heading mb-2 font-display tracking-wide">
             Create Your Registry
           </h1>
-          <p className="text-gray-400 text-sm">
+          <p className="text-wd-charcoal/50 text-sm">
             Set up a gift registry for any occasion
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="registryName" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="registryName" className="block text-sm font-medium text-wd-charcoal mb-2">
               Registry Name
             </label>
             <input
@@ -104,21 +104,21 @@ export default function CreateRegistry() {
               id="registryName"
               value={registryName}
               onChange={(e) => setRegistryName(e.target.value)}
-              className="w-full px-4 py-2 bg-wd-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow placeholder-gray-500"
+              className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
               placeholder="Sarah's Birthday Wishlist"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="occasion" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="occasion" className="block text-sm font-medium text-wd-charcoal mb-2">
               Occasion
             </label>
             <select
               id="occasion"
               value={occasion}
               onChange={(e) => setOccasion(e.target.value)}
-              className="w-full px-4 py-2 bg-wd-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow"
+              className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading"
             >
               {occasions.map((o) => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -127,33 +127,33 @@ export default function CreateRegistry() {
           </div>
 
           <div>
-            <label htmlFor="eventDate" className="block text-sm font-medium text-gray-300 mb-2">
-              Event Date <span className="text-gray-500">(optional)</span>
+            <label htmlFor="eventDate" className="block text-sm font-medium text-wd-charcoal mb-2">
+              Event Date <span className="text-wd-charcoal/40">(optional)</span>
             </label>
             <input
               type="date"
               id="eventDate"
               value={eventDate}
               onChange={(e) => setEventDate(e.target.value)}
-              className="w-full px-4 py-2 bg-wd-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow"
+              className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading"
             />
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">
-              Description <span className="text-gray-500">(optional)</span>
+            <label htmlFor="description" className="block text-sm font-medium text-wd-charcoal mb-2">
+              Description <span className="text-wd-charcoal/40">(optional)</span>
             </label>
             <textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-2 bg-wd-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow placeholder-gray-500 h-20 resize-none"
+              className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30 h-20 resize-none"
               placeholder="Add a note for your guests..."
             />
           </div>
 
           <div>
-            <label htmlFor="adminPassword" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="adminPassword" className="block text-sm font-medium text-wd-charcoal mb-2">
               Admin Password
             </label>
             <input
@@ -161,18 +161,18 @@ export default function CreateRegistry() {
               id="adminPassword"
               value={adminPassword}
               onChange={(e) => setAdminPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-wd-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow placeholder-gray-500"
+              className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
               placeholder="Minimum 6 characters"
               required
               minLength={6}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-wd-charcoal/40 mt-1">
               You&apos;ll use this to manage your registry
             </p>
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-wd-charcoal mb-2">
               Confirm Password
             </label>
             <input
@@ -180,14 +180,14 @@ export default function CreateRegistry() {
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-wd-dark border border-white/10 rounded-lg focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow placeholder-gray-500"
+              className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
               placeholder="Re-enter your password"
               required
             />
           </div>
 
           {error && (
-            <div className="bg-wd-coral/10 border border-wd-coral/30 text-wd-coral px-4 py-3 rounded-lg">
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
@@ -195,14 +195,14 @@ export default function CreateRegistry() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-wd-coral to-wd-purple text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transform"
+            className="w-full bg-wd-gold text-white py-3 rounded-xl font-semibold hover:bg-wd-gold-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transform"
           >
             {loading ? "Creating Registry..." : "Create Registry"}
           </button>
         </form>
 
         <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-400 hover:text-wd-gold transition-colors">
+          <Link href="/" className="text-sm text-wd-charcoal/50 hover:text-wd-gold transition-colors">
             &larr; Back to Home
           </Link>
         </div>

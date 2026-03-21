@@ -215,12 +215,12 @@ export default function Home() {
   };
 
   const occasions = [
-    { emoji: "🎂", name: "Birthday", color: "from-pink-500 to-rose-600" },
-    { emoji: "💍", name: "Wedding", color: "from-purple-500 to-violet-600" },
-    { emoji: "🍼", name: "Baby Shower", color: "from-sky-400 to-blue-500" },
-    { emoji: "🎄", name: "Christmas", color: "from-green-500 to-emerald-600" },
-    { emoji: "🏡", name: "Housewarming", color: "from-amber-400 to-orange-500" },
-    { emoji: "🎓", name: "Graduation", color: "from-indigo-500 to-blue-600" },
+    { emoji: "🎂", name: "Birthday" },
+    { emoji: "💍", name: "Wedding" },
+    { emoji: "🍼", name: "Baby Shower" },
+    { emoji: "🎄", name: "Christmas" },
+    { emoji: "🏡", name: "Housewarming" },
+    { emoji: "🎓", name: "Graduation" },
   ];
 
   const faqs = [
@@ -289,30 +289,30 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToStructuredData) }}
       />
 
-      <div className="min-h-screen bg-wd-dark text-wd-snow overflow-x-hidden">
+      <div className="min-h-screen bg-white text-wd-charcoal overflow-x-hidden">
         {/* Hero Section */}
-        <header className="relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-10 left-[10%] w-2 h-2 bg-wd-coral rounded-full animate-twinkle"></div>
-            <div className="absolute top-20 left-[30%] w-1.5 h-1.5 bg-wd-purple rounded-full animate-twinkle" style={{ animationDelay: '0.5s' }}></div>
+        <header className="relative overflow-hidden bg-white">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-10 left-[10%] w-2 h-2 bg-wd-gold rounded-full animate-twinkle"></div>
+            <div className="absolute top-20 left-[30%] w-1.5 h-1.5 bg-wd-rose-gold rounded-full animate-twinkle" style={{ animationDelay: '0.5s' }}></div>
             <div className="absolute top-8 left-[50%] w-2 h-2 bg-wd-gold rounded-full animate-twinkle" style={{ animationDelay: '1s' }}></div>
-            <div className="absolute top-16 left-[70%] w-1.5 h-1.5 bg-wd-coral rounded-full animate-twinkle" style={{ animationDelay: '1.5s' }}></div>
-            <div className="absolute top-12 left-[90%] w-2 h-2 bg-wd-purple rounded-full animate-twinkle" style={{ animationDelay: '0.3s' }}></div>
+            <div className="absolute top-16 left-[70%] w-1.5 h-1.5 bg-wd-rose-gold rounded-full animate-twinkle" style={{ animationDelay: '1.5s' }}></div>
+            <div className="absolute top-12 left-[90%] w-2 h-2 bg-wd-gold rounded-full animate-twinkle" style={{ animationDelay: '0.3s' }}></div>
           </div>
 
           <div className="container mx-auto px-4 py-20 relative z-10">
             <div className="text-center max-w-4xl mx-auto">
               <div className="text-7xl mb-6">🎁</div>
-              <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold mb-6 font-display">
-                <span className="wd-gradient-text">Create Your Perfect</span>
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold mb-6 font-display tracking-wide">
+                <span className="text-wd-heading">Create Your Perfect</span>
                 <br />
-                <span className="wd-gradient-text">Gift Registry</span>
+                <span className="text-wd-heading">Gift Registry</span>
                 <span className="text-wd-gold"> — Free</span>
               </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-wd-gold mb-4 font-semibold">
+              <p className="text-lg sm:text-xl md:text-2xl text-wd-gold mb-4 font-semibold tracking-wide">
                 The free gift registry for every occasion
               </p>
-              <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg md:text-xl text-wd-charcoal/70 mb-10 max-w-3xl mx-auto leading-relaxed">
                 For birthdays, weddings, baby showers, and every occasion. Share your
                 wishlist, friends claim items &mdash; no duplicate gifts, ever.
               </p>
@@ -320,25 +320,25 @@ export default function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-16">
                 <Link
                   href="/create"
-                  className="group bg-gradient-to-br from-wd-coral to-wd-purple p-8 rounded-2xl card-glow transition-all duration-300 hover:scale-105"
+                  className="group bg-wd-gold p-8 rounded-2xl card-glow transition-all duration-300 hover:scale-105 hover:bg-wd-gold-dark"
                 >
                   <div className="text-5xl mb-4">✨</div>
-                  <h2 className="text-2xl font-bold text-white mb-2">Create Registry</h2>
+                  <h2 className="text-2xl font-bold text-white mb-2 font-display">Create Registry</h2>
                   <p className="text-white/80 mb-3 text-sm">
                     Start a gift registry for any occasion in under a minute
                   </p>
-                  <span className="text-wd-gold font-semibold group-hover:underline">
+                  <span className="text-white font-semibold group-hover:underline">
                     Get Started &rarr;
                   </span>
                 </Link>
 
                 <Link
                   href="/join"
-                  className="group bg-gradient-to-br from-wd-purple to-indigo-700 p-8 rounded-2xl card-glow transition-all duration-300 hover:scale-105"
+                  className="group bg-white p-8 rounded-2xl border-2 border-wd-gold/30 card-glow transition-all duration-300 hover:scale-105 hover:border-wd-gold"
                 >
                   <div className="text-5xl mb-4">🎁</div>
-                  <h2 className="text-2xl font-bold text-white mb-2">Join Registry</h2>
-                  <p className="text-white/80 mb-3 text-sm">
+                  <h2 className="text-2xl font-bold text-wd-heading mb-2 font-display">Join Registry</h2>
+                  <p className="text-wd-charcoal/60 mb-3 text-sm">
                     Have an invite code? Join and start claiming gifts
                   </p>
                   <span className="text-wd-gold font-semibold group-hover:underline">
@@ -352,52 +352,52 @@ export default function Home() {
                 {occasions.map((occasion) => (
                   <div
                     key={occasion.name}
-                    className="bg-wd-dark-card border border-white/5 rounded-xl p-3 text-center card-glow"
+                    className="bg-white border border-wd-border rounded-xl p-3 text-center card-glow hover:border-wd-gold/40 transition-colors"
                   >
                     <div className="text-3xl mb-1">{occasion.emoji}</div>
-                    <div className="text-xs text-gray-400 font-medium">{occasion.name}</div>
+                    <div className="text-xs text-wd-charcoal/60 font-medium">{occasion.name}</div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-wd-purple/30 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-wd-gold/20 to-transparent"></div>
         </header>
 
         {/* How It Works Section */}
-        <section className="py-20 bg-wd-dark-surface" aria-labelledby="how-it-works-heading">
+        <section className="py-20 bg-wd-cream" aria-labelledby="how-it-works-heading">
           <div className="container mx-auto px-4">
             <div className="text-center mb-14">
-              <h2 id="how-it-works-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 font-display">
-                How It Works &mdash; <span className="wd-gradient-text">Simple as 1, 2, 3</span>
+              <h2 id="how-it-works-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 font-display tracking-wide text-wd-heading">
+                How It Works &mdash; <span className="text-wd-gold">Simple as 1, 2, 3</span>
               </h2>
-              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              <p className="text-xl text-wd-charcoal/60 max-w-3xl mx-auto">
                 Create your free gift registry in minutes. No accounts needed.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              <div className="text-center p-8 bg-wd-dark rounded-2xl border border-wd-coral/20 card-glow">
-                <div className="w-16 h-16 bg-wd-coral/20 rounded-full flex items-center justify-center text-2xl font-bold text-wd-coral mx-auto mb-5 border-2 border-wd-coral/40">1</div>
-                <h3 className="text-xl font-bold text-wd-coral mb-3">Create Your Registry</h3>
-                <p className="text-gray-400">
+              <div className="text-center p-8 bg-white rounded-2xl border border-wd-border card-glow">
+                <div className="w-16 h-16 bg-wd-gold/10 rounded-full flex items-center justify-center text-2xl font-bold text-wd-gold mx-auto mb-5 border-2 border-wd-gold/30">1</div>
+                <h3 className="text-xl font-bold text-wd-heading mb-3 font-display">Create Your Registry</h3>
+                <p className="text-wd-charcoal/60">
                   Pick an occasion, name your registry, and start adding wish items with links, prices, and priority levels. Set an admin password to manage everything.
                 </p>
               </div>
 
-              <div className="text-center p-8 bg-wd-dark rounded-2xl border border-wd-purple/20 card-glow">
-                <div className="w-16 h-16 bg-wd-purple/20 rounded-full flex items-center justify-center text-2xl font-bold text-wd-purple mx-auto mb-5 border-2 border-wd-purple/40">2</div>
-                <h3 className="text-xl font-bold text-wd-purple mb-3">Share the Link</h3>
-                <p className="text-gray-400">
+              <div className="text-center p-8 bg-white rounded-2xl border border-wd-border card-glow">
+                <div className="w-16 h-16 bg-wd-gold/10 rounded-full flex items-center justify-center text-2xl font-bold text-wd-gold mx-auto mb-5 border-2 border-wd-gold/30">2</div>
+                <h3 className="text-xl font-bold text-wd-heading mb-3 font-display">Share the Link</h3>
+                <p className="text-wd-charcoal/60">
                   Share the invite code with friends and family. They join with the code &mdash; no sign-ups or accounts required. Everyone gets a simple login code.
                 </p>
               </div>
 
-              <div className="text-center p-8 bg-wd-dark rounded-2xl border border-wd-gold/20 card-glow">
-                <div className="w-16 h-16 bg-wd-gold/20 rounded-full flex items-center justify-center text-2xl font-bold text-wd-gold mx-auto mb-5 border-2 border-wd-gold/40">3</div>
-                <h3 className="text-xl font-bold text-wd-gold mb-3">Items Get Claimed</h3>
-                <p className="text-gray-400">
+              <div className="text-center p-8 bg-white rounded-2xl border border-wd-border card-glow">
+                <div className="w-16 h-16 bg-wd-gold/10 rounded-full flex items-center justify-center text-2xl font-bold text-wd-gold mx-auto mb-5 border-2 border-wd-gold/30">3</div>
+                <h3 className="text-xl font-bold text-wd-heading mb-3 font-display">Items Get Claimed</h3>
+                <p className="text-wd-charcoal/60">
                   Friends browse and claim items they want to buy. No duplicates, and the surprise is preserved &mdash; you can&apos;t see who claimed what!
                 </p>
               </div>
@@ -406,62 +406,62 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 bg-wd-dark" aria-labelledby="features-heading">
+        <section className="py-20 bg-white" aria-labelledby="features-heading">
           <div className="container mx-auto px-4">
             <div className="text-center mb-14">
-              <h2 id="features-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 font-display">
-                Why Choose <span className="wd-gradient-text">WishDrop</span>?
+              <h2 id="features-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 font-display tracking-wide text-wd-heading">
+                Why Choose <span className="text-wd-gold">WishDrop</span>?
               </h2>
-              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              <p className="text-xl text-wd-charcoal/60 max-w-3xl mx-auto">
                 The easiest way to create a gift registry for any occasion
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              <div className="p-6 bg-wd-dark-surface rounded-2xl border border-white/5 card-glow">
+              <div className="p-6 bg-white rounded-2xl border border-wd-border card-glow">
                 <div className="text-4xl mb-4">🎯</div>
-                <h3 className="text-lg font-bold text-wd-gold mb-2">Item Claiming</h3>
-                <p className="text-gray-400 text-sm">
+                <h3 className="text-lg font-bold text-wd-heading mb-2 font-display">Item Claiming</h3>
+                <p className="text-wd-charcoal/60 text-sm">
                   Friends claim items they want to buy. Once claimed, everyone knows &mdash; no more duplicate gifts or awkward returns. Unclaim anytime if plans change.
                 </p>
               </div>
 
-              <div className="p-6 bg-wd-dark-surface rounded-2xl border border-white/5 card-glow">
+              <div className="p-6 bg-white rounded-2xl border border-wd-border card-glow">
                 <div className="text-4xl mb-4">🤫</div>
-                <h3 className="text-lg font-bold text-wd-gold mb-2">Surprise-Safe</h3>
-                <p className="text-gray-400 text-sm">
+                <h3 className="text-lg font-bold text-wd-heading mb-2 font-display">Surprise-Safe</h3>
+                <p className="text-wd-charcoal/60 text-sm">
                   The registry owner can&apos;t see who claimed what &mdash; only whether items are claimed or available. The surprise stays intact while duplicates are prevented.
                 </p>
               </div>
 
-              <div className="p-6 bg-wd-dark-surface rounded-2xl border border-white/5 card-glow">
+              <div className="p-6 bg-white rounded-2xl border border-wd-border card-glow">
                 <div className="text-4xl mb-4">🎉</div>
-                <h3 className="text-lg font-bold text-wd-gold mb-2">Multiple Occasions</h3>
-                <p className="text-gray-400 text-sm">
+                <h3 className="text-lg font-bold text-wd-heading mb-2 font-display">Multiple Occasions</h3>
+                <p className="text-wd-charcoal/60 text-sm">
                   Birthday, wedding, baby shower, Christmas, housewarming, graduation &mdash; WishDrop works for any celebration or gift-giving occasion.
                 </p>
               </div>
 
-              <div className="p-6 bg-wd-dark-surface rounded-2xl border border-white/5 card-glow">
+              <div className="p-6 bg-white rounded-2xl border border-wd-border card-glow">
                 <div className="text-4xl mb-4">🔐</div>
-                <h3 className="text-lg font-bold text-wd-gold mb-2">No Registration</h3>
-                <p className="text-gray-400 text-sm">
+                <h3 className="text-lg font-bold text-wd-heading mb-2 font-display">No Registration</h3>
+                <p className="text-wd-charcoal/60 text-sm">
                   No sign-ups, no accounts. Simple code-based login keeps things easy. Optionally use email magic links for an even smoother experience.
                 </p>
               </div>
 
-              <div className="p-6 bg-wd-dark-surface rounded-2xl border border-white/5 card-glow">
+              <div className="p-6 bg-white rounded-2xl border border-wd-border card-glow">
                 <div className="text-4xl mb-4">💰</div>
-                <h3 className="text-lg font-bold text-wd-gold mb-2">Price Tracking</h3>
-                <p className="text-gray-400 text-sm">
+                <h3 className="text-lg font-bold text-wd-heading mb-2 font-display">Price Tracking</h3>
+                <p className="text-wd-charcoal/60 text-sm">
                   Add prices to items in any currency &mdash; USD, EUR, GBP, ZAR, and more. Set priority levels so friends know what matters most to you.
                 </p>
               </div>
 
-              <div className="p-6 bg-wd-dark-surface rounded-2xl border border-white/5 card-glow">
+              <div className="p-6 bg-white rounded-2xl border border-wd-border card-glow">
                 <div className="text-4xl mb-4">📱</div>
-                <h3 className="text-lg font-bold text-wd-gold mb-2">Mobile Friendly</h3>
-                <p className="text-gray-400 text-sm">
+                <h3 className="text-lg font-bold text-wd-heading mb-2 font-display">Mobile Friendly</h3>
+                <p className="text-wd-charcoal/60 text-sm">
                   Designed mobile-first with large touch targets and responsive layouts. Create registries, browse wishlists, and claim gifts from any device.
                 </p>
               </div>
@@ -470,78 +470,78 @@ export default function Home() {
         </section>
 
         {/* Pricing */}
-        <section className="py-20 bg-wd-dark-surface" aria-labelledby="pricing-heading">
+        <section className="py-20 bg-wd-cream" aria-labelledby="pricing-heading">
           <div className="container mx-auto px-4 text-center">
-            <h2 id="pricing-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 font-display">
-              <span className="wd-gradient-text">Simple</span> Pricing
+            <h2 id="pricing-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 font-display tracking-wide text-wd-heading">
+              <span className="text-wd-gold">Simple</span> Pricing
             </h2>
-            <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-wd-charcoal/60 mb-10 max-w-2xl mx-auto">
               Free for most people. One simple upgrade for power users.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
               {/* Free Tier */}
-              <div className="bg-wd-dark rounded-2xl border-2 border-white/10 p-8 card-glow">
+              <div className="bg-white rounded-2xl border-2 border-wd-border p-8 card-glow">
                 <div className="text-4xl mb-3">🎁</div>
-                <div className="text-wd-coral text-sm font-semibold uppercase tracking-wider mb-2">Free</div>
-                <div className="text-5xl font-bold text-white mb-2">$0</div>
-                <p className="text-gray-400 mb-6">No credit card needed</p>
+                <div className="text-wd-gold text-sm font-semibold uppercase tracking-wider mb-2">Free</div>
+                <div className="text-5xl font-bold text-wd-heading mb-2 font-display">$0</div>
+                <p className="text-wd-charcoal/50 mb-6">No credit card needed</p>
 
                 <ul className="text-left space-y-3 mb-8">
-                  <li className="flex items-start text-gray-300">
-                    <span className="text-wd-coral mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>1 registry</span>
+                  <li className="flex items-start text-wd-charcoal">
+                    <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>1 registry</span>
                   </li>
-                  <li className="flex items-start text-gray-300">
-                    <span className="text-wd-coral mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Up to 10 items</span>
+                  <li className="flex items-start text-wd-charcoal">
+                    <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Up to 10 items</span>
                   </li>
-                  <li className="flex items-start text-gray-300">
-                    <span className="text-wd-coral mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Item claiming</span>
+                  <li className="flex items-start text-wd-charcoal">
+                    <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Item claiming</span>
                   </li>
-                  <li className="flex items-start text-gray-300">
-                    <span className="text-wd-coral mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Surprise-safe design</span>
+                  <li className="flex items-start text-wd-charcoal">
+                    <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Surprise-safe design</span>
                   </li>
-                  <li className="flex items-start text-gray-300">
-                    <span className="text-wd-coral mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Email magic link login</span>
+                  <li className="flex items-start text-wd-charcoal">
+                    <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Email magic link login</span>
                   </li>
-                  <li className="flex items-start text-gray-300">
-                    <span className="text-wd-coral mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Multi-currency support</span>
+                  <li className="flex items-start text-wd-charcoal">
+                    <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Multi-currency support</span>
                   </li>
                 </ul>
 
                 <Link
                   href="/create"
-                  className="block w-full bg-wd-coral text-white py-3 rounded-xl font-bold text-lg hover:bg-wd-coral-dark transition-colors"
+                  className="block w-full bg-white text-wd-gold py-3 rounded-xl font-bold text-lg border-2 border-wd-gold hover:bg-wd-cream transition-colors text-center"
                 >
                   Get Started &rarr;
                 </Link>
               </div>
 
               {/* Unlimited Tier */}
-              <div className="bg-wd-dark rounded-2xl border-2 border-wd-gold/30 p-8 card-glow relative">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-wd-gold text-wd-dark text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Best Value</div>
+              <div className="bg-white rounded-2xl border-2 border-wd-gold/40 p-8 card-glow relative">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-wd-gold text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Best Value</div>
                 <div className="text-4xl mb-3">🏆</div>
                 <div className="text-wd-gold text-sm font-semibold uppercase tracking-wider mb-2">Unlimited</div>
-                <div className="text-5xl font-bold text-white mb-2">$10</div>
-                <p className="text-gray-400 mb-6">One-time payment</p>
+                <div className="text-5xl font-bold text-wd-heading mb-2 font-display">$10</div>
+                <p className="text-wd-charcoal/50 mb-6">One-time payment</p>
 
                 <ul className="text-left space-y-3 mb-8">
-                  <li className="flex items-start text-gray-300">
+                  <li className="flex items-start text-wd-charcoal">
                     <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Everything in Free</span>
                   </li>
-                  <li className="flex items-start text-gray-300">
+                  <li className="flex items-start text-wd-charcoal">
                     <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Unlimited registries</span>
                   </li>
-                  <li className="flex items-start text-gray-300">
+                  <li className="flex items-start text-wd-charcoal">
                     <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Unlimited items</span>
                   </li>
-                  <li className="flex items-start text-gray-300">
+                  <li className="flex items-start text-wd-charcoal">
                     <span className="text-wd-gold mr-3 mt-0.5 flex-shrink-0">&#10003;</span> <span>Pay once, use forever</span>
                   </li>
                 </ul>
 
                 <a
                   href="https://buy.stripe.com/8x2aEW3TvbZ30Ex8jDeAg05"
-                  className="block w-full bg-wd-gold text-wd-dark py-3 rounded-xl font-bold text-lg hover:bg-wd-gold-dark transition-colors text-center"
+                  className="block w-full bg-wd-gold text-white py-3 rounded-xl font-bold text-lg hover:bg-wd-gold-dark transition-colors text-center"
                 >
                   Buy Now &rarr;
                 </a>
@@ -551,13 +551,13 @@ export default function Home() {
         </section>
 
         {/* FAQ Section */}
-        <section className="py-20 bg-wd-dark" aria-labelledby="faq-heading">
+        <section className="py-20 bg-white" aria-labelledby="faq-heading">
           <div className="container mx-auto px-4">
             <div className="text-center mb-14">
-              <h2 id="faq-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 font-display">
-                Frequently Asked <span className="wd-gradient-text">Questions</span>
+              <h2 id="faq-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 font-display tracking-wide text-wd-heading">
+                Frequently Asked <span className="text-wd-gold">Questions</span>
               </h2>
-              <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              <p className="text-xl text-wd-charcoal/60 max-w-3xl mx-auto">
                 Everything you need to know about WishDrop
               </p>
             </div>
@@ -566,13 +566,13 @@ export default function Home() {
               {faqs.map((faq, index) => (
                 <details
                   key={index}
-                  className="group bg-wd-dark-surface rounded-xl border border-white/5 overflow-hidden"
+                  className="group bg-white rounded-xl border border-wd-border overflow-hidden"
                 >
-                  <summary className="cursor-pointer p-6 flex items-center justify-between font-semibold text-wd-snow hover:text-wd-gold transition-colors">
+                  <summary className="cursor-pointer p-6 flex items-center justify-between font-semibold text-wd-heading hover:text-wd-gold transition-colors">
                     <span className="pr-4">{faq.q}</span>
                     <span className="text-wd-gold flex-shrink-0 text-xl group-open:rotate-45 transition-transform duration-200">+</span>
                   </summary>
-                  <div className="px-6 pb-6 text-gray-400 leading-relaxed border-t border-white/5 pt-4">
+                  <div className="px-6 pb-6 text-wd-charcoal/60 leading-relaxed border-t border-wd-border pt-4">
                     {faq.a}
                   </div>
                 </details>
@@ -582,24 +582,24 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-wd-coral via-wd-purple to-indigo-700" aria-labelledby="cta-heading">
+        <section className="py-20 bg-wd-cream" aria-labelledby="cta-heading">
           <div className="container mx-auto px-4 text-center">
-            <h2 id="cta-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 text-white font-display">
+            <h2 id="cta-heading" className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4 text-wd-heading font-display tracking-wide">
               Ready to Create Your Gift Registry?
             </h2>
-            <p className="text-xl mb-10 text-white/80 max-w-2xl mx-auto">
+            <p className="text-xl mb-10 text-wd-charcoal/60 max-w-2xl mx-auto">
               Join thousands of people who use WishDrop to make gift-giving simple, fun, and duplicate-free
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/create"
-                className="bg-white text-wd-coral px-8 py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-wd-snow transition-colors hover:scale-105 transform duration-300 min-h-[48px]"
+                className="bg-wd-gold text-white px-8 py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-wd-gold-dark transition-colors hover:scale-105 transform duration-300 min-h-[48px]"
               >
                 Create Registry &rarr;
               </Link>
               <Link
                 href="/join"
-                className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-white hover:text-wd-purple transition-all hover:scale-105 transform duration-300 min-h-[48px]"
+                className="bg-white border-2 border-wd-gold text-wd-gold px-8 py-4 rounded-xl font-bold text-base sm:text-lg hover:bg-wd-cream transition-all hover:scale-105 transform duration-300 min-h-[48px]"
               >
                 Join Registry &rarr;
               </Link>
@@ -608,41 +608,41 @@ export default function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="bg-[#080515] py-12 border-t border-white/5">
+        <footer className="bg-wd-light-bg py-12 border-t border-wd-border">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
               <div>
-                <div className="text-2xl font-bold mb-3">
-                  <span className="wd-gradient-text">WishDrop</span>{" "}
-                  <span className="text-wd-gold">🎁</span>
+                <div className="text-2xl font-bold mb-3 font-display">
+                  <span className="text-wd-gold">WishDrop</span>{" "}
+                  <span>🎁</span>
                 </div>
-                <p className="text-gray-500 text-sm">
+                <p className="text-wd-charcoal/50 text-sm">
                   The free gift registry for every occasion. Create wishlists, share with friends, and claim items to avoid duplicate gifts.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-wd-gold font-semibold mb-3">Quick Links</h3>
+                <h3 className="text-wd-heading font-semibold mb-3">Quick Links</h3>
                 <nav aria-label="Footer navigation">
                   <ul className="space-y-2">
-                    <li><Link href="/create" className="text-gray-400 hover:text-wd-gold transition-colors text-sm">Create Registry</Link></li>
-                    <li><Link href="/join" className="text-gray-400 hover:text-wd-gold transition-colors text-sm">Join Registry</Link></li>
-                    <li><Link href="/login" className="text-gray-400 hover:text-wd-gold transition-colors text-sm">Participant Login</Link></li>
-                    <li><a href="#pricing-heading" className="text-gray-400 hover:text-wd-gold transition-colors text-sm">Pricing</a></li>
+                    <li><Link href="/create" className="text-wd-charcoal/50 hover:text-wd-gold transition-colors text-sm">Create Registry</Link></li>
+                    <li><Link href="/join" className="text-wd-charcoal/50 hover:text-wd-gold transition-colors text-sm">Join Registry</Link></li>
+                    <li><Link href="/login" className="text-wd-charcoal/50 hover:text-wd-gold transition-colors text-sm">Participant Login</Link></li>
+                    <li><a href="#pricing-heading" className="text-wd-charcoal/50 hover:text-wd-gold transition-colors text-sm">Pricing</a></li>
                   </ul>
                 </nav>
               </div>
 
               <div>
-                <h3 className="text-wd-gold font-semibold mb-3">About</h3>
-                <p className="text-gray-500 text-sm">
+                <h3 className="text-wd-heading font-semibold mb-3">About</h3>
+                <p className="text-wd-charcoal/50 text-sm">
                   Built for every celebration. WishDrop makes gift registries effortless and fun for birthdays, weddings, baby showers, and any occasion.
                 </p>
               </div>
             </div>
 
-            <div className="border-t border-white/5 pt-6 text-center">
-              <p className="text-gray-500 text-sm">
+            <div className="border-t border-wd-border pt-6 text-center">
+              <p className="text-wd-charcoal/40 text-sm">
                 &copy; {new Date().getFullYear()} WishDrop &bull; The Free Gift Registry for Every Occasion &bull;{" "}
                 <a href="https://wishdrop.wagnerway.co.za" className="text-wd-gold hover:text-wd-gold-dark transition-colors">
                   wishdrop.wagnerway.co.za

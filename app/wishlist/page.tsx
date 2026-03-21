@@ -89,7 +89,6 @@ export default function Wishlist() {
         const data = await itemsRes.json();
         setAllParticipants(data.participants || []);
 
-        // Load my items from the participants list
         const me = (data.participants || []).find((p: ParticipantWithItems) => p.id === pid);
         if (me && me.wishlistItems.length > 0) {
           setMyItems(me.wishlistItems.map((item: WishlistItem) => ({
@@ -237,23 +236,21 @@ export default function Wishlist() {
   };
 
   const priorityColors: Record<string, string> = {
-    high: "bg-wd-coral/20 text-wd-coral border-wd-coral/30",
-    medium: "bg-wd-gold/20 text-wd-gold border-wd-gold/30",
-    low: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+    high: "bg-red-50 text-red-600 border-red-200",
+    medium: "bg-wd-gold/10 text-wd-gold border-wd-gold/30",
+    low: "bg-gray-100 text-gray-500 border-gray-200",
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-wd-dark">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-xl text-wd-gold">Loading...</div>
       </div>
     );
   }
 
-  // Get other participants' items (not my own)
   const otherParticipants = allParticipants.filter(p => p.id !== personId);
 
-  // All items from others, flattened for filtering
   const allOtherItems = otherParticipants.flatMap(p =>
     p.wishlistItems.map(item => ({ ...item, ownerName: p.name, ownerId: p.id }))
   );
@@ -265,12 +262,12 @@ export default function Wishlist() {
   });
 
   return (
-    <div className="min-h-screen bg-wd-dark p-4 md:p-8">
+    <div className="min-h-screen bg-wd-cream p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div className="min-w-0">
-            <h1 className="text-2xl sm:text-4xl font-bold text-wd-gold font-display truncate">Welcome, {personName}!</h1>
-            {groupName && <p className="text-gray-300 mt-1 text-sm sm:text-base truncate">{groupName}</p>}
+            <h1 className="text-2xl sm:text-4xl font-bold text-wd-heading font-display tracking-wide truncate">Welcome, {personName}!</h1>
+            {groupName && <p className="text-wd-charcoal/60 mt-1 text-sm sm:text-base truncate">{groupName}</p>}
             {budget && (
               <div className="mt-2 inline-flex items-center bg-wd-gold/10 border border-wd-gold/30 text-wd-gold px-3 py-1 rounded-lg text-sm font-medium">
                 Budget: {budget.currency} {budget.amount}
@@ -279,32 +276,32 @@ export default function Wishlist() {
           </div>
           <button
             onClick={handleLogout}
-            className="self-start sm:self-auto bg-white/10 text-wd-snow px-4 py-2 rounded-lg hover:bg-white/20 transition border border-white/10 min-h-[44px]"
+            className="self-start sm:self-auto bg-white text-wd-charcoal px-4 py-2 rounded-lg hover:bg-wd-cream transition border border-wd-border min-h-[44px]"
           >
             Logout
           </button>
         </div>
 
         {error && (
-          <div className="bg-wd-coral/10 border border-wd-coral/30 text-wd-coral px-4 py-3 rounded-lg mb-4">
+          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-4">
             {error}
           </div>
         )}
 
         {successMessage && (
-          <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-3 rounded-lg mb-4">
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg mb-4">
             {successMessage}
           </div>
         )}
 
         {/* Tab Navigation */}
-        <div className="flex mb-6 bg-wd-dark-card rounded-lg p-1 border border-white/5">
+        <div className="flex mb-6 bg-white rounded-lg p-1 border border-wd-border">
           <button
             onClick={() => setActiveTab("registry")}
             className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition min-h-[48px] ${
               activeTab === "registry"
-                ? "bg-gradient-to-r from-wd-coral to-wd-purple text-white shadow-sm"
-                : "text-gray-400 hover:text-wd-snow"
+                ? "bg-wd-gold text-white shadow-sm"
+                : "text-wd-charcoal/50 hover:text-wd-heading"
             }`}
           >
             Registry Items
@@ -313,8 +310,8 @@ export default function Wishlist() {
             onClick={() => setActiveTab("my-items")}
             className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition min-h-[48px] ${
               activeTab === "my-items"
-                ? "bg-gradient-to-r from-wd-coral to-wd-purple text-white shadow-sm"
-                : "text-gray-400 hover:text-wd-snow"
+                ? "bg-wd-gold text-white shadow-sm"
+                : "text-wd-charcoal/50 hover:text-wd-heading"
             }`}
           >
             My Wishlist
@@ -332,8 +329,8 @@ export default function Wishlist() {
                   onClick={() => setFilterMode(mode)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition min-h-[44px] ${
                     filterMode === mode
-                      ? "bg-wd-purple text-white"
-                      : "bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10"
+                      ? "bg-wd-gold text-white"
+                      : "bg-white text-wd-charcoal/50 hover:bg-wd-cream border border-wd-border"
                   }`}
                 >
                   {mode === "all" ? "All Items" : mode === "available" ? "Available" : "Claimed"}
@@ -342,28 +339,28 @@ export default function Wishlist() {
             </div>
 
             {filteredItems.length === 0 ? (
-              <div className="bg-wd-dark-card p-8 rounded-2xl border border-white/10 card-glow text-center">
+              <div className="bg-white p-8 rounded-2xl border border-wd-border card-glow text-center">
                 <div className="text-6xl mb-4">🎁</div>
-                <p className="text-wd-snow text-lg">
+                <p className="text-wd-heading text-lg">
                   {allOtherItems.length === 0
                     ? "No one has added wish items yet."
                     : "No items match this filter."}
                 </p>
-                <p className="text-sm text-gray-400 mt-2">Check back later or add your own items!</p>
+                <p className="text-sm text-wd-charcoal/50 mt-2">Check back later or add your own items!</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredItems.map((item) => (
                   <div
                     key={item.id}
-                    className={`bg-wd-dark-card p-5 rounded-2xl border card-glow ${
-                      item.claimedById ? "border-emerald-500/20" : "border-white/10"
+                    className={`bg-white p-5 rounded-2xl border card-glow ${
+                      item.claimedById ? "border-emerald-200" : "border-wd-border"
                     }`}
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs text-wd-purple font-medium mb-1">For {item.ownerName}</p>
-                        <h3 className="font-semibold text-wd-snow text-lg truncate">{item.title}</h3>
+                        <p className="text-xs text-wd-gold font-medium mb-1">For {item.ownerName}</p>
+                        <h3 className="font-semibold text-wd-heading text-lg truncate">{item.title}</h3>
                       </div>
                       {item.priority && (
                         <span className={`text-xs px-2 py-1 rounded-full border ml-2 flex-shrink-0 ${priorityColors[item.priority] || priorityColors.medium}`}>
@@ -383,7 +380,7 @@ export default function Wishlist() {
                           href={item.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-wd-purple hover:underline truncate"
+                          className="text-sm text-wd-gold hover:underline truncate"
                         >
                           View Product
                         </a>
@@ -395,18 +392,18 @@ export default function Wishlist() {
                       <div>
                         {item.claimedById === personId ? (
                           <div className="flex items-center justify-between">
-                            <span className="text-emerald-400 text-sm font-medium">You claimed this</span>
+                            <span className="text-emerald-600 text-sm font-medium">You claimed this</span>
                             <button
                               onClick={() => item.id && handleUnclaim(item.id)}
                               disabled={claiming === item.id}
-                              className="bg-white/10 text-wd-snow px-4 py-2 rounded-lg text-sm hover:bg-white/20 transition border border-white/10 min-h-[44px] disabled:opacity-50"
+                              className="bg-white text-wd-charcoal px-4 py-2 rounded-lg text-sm hover:bg-wd-cream transition border border-wd-border min-h-[44px] disabled:opacity-50"
                             >
                               {claiming === item.id ? "..." : "Unclaim"}
                             </button>
                           </div>
                         ) : (
-                          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
-                            <span className="text-emerald-400 text-sm">
+                          <div className="bg-wd-gold/10 border border-wd-gold/20 rounded-lg px-3 py-2">
+                            <span className="text-wd-rose-gold text-sm">
                               Claimed by {item.claimedByName}
                             </span>
                           </div>
@@ -416,7 +413,7 @@ export default function Wishlist() {
                       <button
                         onClick={() => item.id && handleClaim(item.id)}
                         disabled={claiming === item.id}
-                        className="w-full bg-gradient-to-r from-wd-coral to-wd-purple text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all duration-300 disabled:opacity-50 min-h-[48px]"
+                        className="w-full bg-wd-gold text-white py-3 rounded-xl font-semibold hover:bg-wd-gold-dark transition-all duration-300 disabled:opacity-50 min-h-[48px]"
                       >
                         {claiming === item.id ? "Claiming..." : "Claim This Gift"}
                       </button>
@@ -430,19 +427,19 @@ export default function Wishlist() {
 
         {/* My Wishlist Tab */}
         {activeTab === "my-items" && (
-          <div className="bg-wd-dark-card p-6 rounded-2xl border border-white/10 card-glow">
-            <h2 className="text-2xl font-bold text-wd-snow mb-4">My Wishlist</h2>
-            <p className="text-sm text-gray-400 mb-4">Add items you&apos;d like to receive</p>
+          <div className="bg-white p-6 rounded-2xl border border-wd-border card-glow">
+            <h2 className="text-2xl font-bold text-wd-heading mb-4 font-display">My Wishlist</h2>
+            <p className="text-sm text-wd-charcoal/50 mb-4">Add items you&apos;d like to receive</p>
 
             <div className="space-y-4">
               {myItems.map((item, index) => (
-                <div key={index} className="border border-white/10 p-4 rounded-lg bg-wd-dark/50">
+                <div key={index} className="border border-wd-border p-4 rounded-lg bg-wd-cream/50">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium text-wd-gold">Item {index + 1}</span>
                     {myItems.length > 1 && (
                       <button
                         onClick={() => handleRemoveItem(index)}
-                        className="text-wd-coral text-sm hover:text-wd-coral-dark min-h-[44px] min-w-[44px] flex items-center justify-center"
+                        className="text-red-500 text-sm hover:text-red-600 min-h-[44px] min-w-[44px] flex items-center justify-center"
                       >
                         Remove
                       </button>
@@ -455,14 +452,14 @@ export default function Wishlist() {
                       value={item.title}
                       onChange={(e) => handleItemChange(index, "title", e.target.value)}
                       placeholder="Item name"
-                      className="w-full px-3 py-2 bg-wd-dark border border-white/10 rounded focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow placeholder-gray-500"
+                      className="w-full px-3 py-2 bg-white border border-wd-border rounded focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
                     />
                     <input
                       type="url"
                       value={item.link}
                       onChange={(e) => handleItemChange(index, "link", e.target.value)}
                       placeholder="https://example.com/product (optional)"
-                      className="w-full px-3 py-2 bg-wd-dark border border-white/10 rounded focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow placeholder-gray-500"
+                      className="w-full px-3 py-2 bg-white border border-wd-border rounded focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
                     />
                     <div className="grid grid-cols-2 gap-2">
                       <input
@@ -470,14 +467,14 @@ export default function Wishlist() {
                         value={item.price || ""}
                         onChange={(e) => handleItemChange(index, "price", parseFloat(e.target.value) || 0)}
                         placeholder="Price (optional)"
-                        className="w-full px-3 py-2 bg-wd-dark border border-white/10 rounded focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow placeholder-gray-500"
+                        className="w-full px-3 py-2 bg-white border border-wd-border rounded focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
                         step="0.01"
                         min="0"
                       />
                       <select
                         value={item.priority || "medium"}
                         onChange={(e) => handleItemChange(index, "priority", e.target.value)}
-                        className="w-full px-3 py-2 bg-wd-dark border border-white/10 rounded focus:ring-2 focus:ring-wd-purple focus:border-transparent text-wd-snow"
+                        className="w-full px-3 py-2 bg-white border border-wd-border rounded focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading"
                       >
                         <option value="high">High Priority</option>
                         <option value="medium">Medium Priority</option>
@@ -491,7 +488,7 @@ export default function Wishlist() {
               {myItems.length < 10 && (
                 <button
                   onClick={handleAddItem}
-                  className="w-full py-2 border-2 border-dashed border-white/10 rounded-lg text-gray-400 hover:border-wd-purple hover:text-wd-purple transition min-h-[48px]"
+                  className="w-full py-2 border-2 border-dashed border-wd-border rounded-lg text-wd-charcoal/40 hover:border-wd-gold hover:text-wd-gold transition min-h-[48px]"
                 >
                   + Add Item
                 </button>
@@ -500,7 +497,7 @@ export default function Wishlist() {
               <button
                 onClick={handleSaveWishlist}
                 disabled={saving}
-                className="w-full bg-gradient-to-r from-wd-coral to-wd-purple text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transform min-h-[48px]"
+                className="w-full bg-wd-gold text-white py-3 rounded-xl font-semibold hover:bg-wd-gold-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transform min-h-[48px]"
               >
                 {saving ? "Saving..." : "Save Wishlist"}
               </button>
