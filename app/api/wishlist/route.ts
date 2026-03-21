@@ -4,14 +4,22 @@ import { prisma } from "@/lib/db";
 // POST/PUT update wishlist items for a participant
 export async function POST(request: NextRequest) {
   try {
-    const { personId, items } = await request.json();
+    const body = await request.json();
+    const personId = body.personId;
+
+    // Accept both single item and array of items
+    let items: any[];
+    if (Array.isArray(body.items)) {
+      items = body.items;
+    } else if (body.title) {
+      // Single item passed as top-level fields
+      items = [{ title: body.title, link: body.link, imageUrl: body.imageUrl, price: body.price, currency: body.currency, priority: body.priority, order: body.order }];
+    } else {
+      return NextResponse.json({ error: "Items array or single item fields required" }, { status: 400 });
+    }
 
     if (!personId) {
       return NextResponse.json({ error: "Participant ID is required" }, { status: 400 });
-    }
-
-    if (!items || !Array.isArray(items)) {
-      return NextResponse.json({ error: "Items must be an array" }, { status: 400 });
     }
 
     if (items.length < 1) {
