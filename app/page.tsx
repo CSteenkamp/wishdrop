@@ -540,7 +540,7 @@ export default function Home() {
                 </ul>
 
                 <a
-                  href="https://buy.stripe.com/dRm3cublXbZ39b357reAg04"
+                  href="https://buy.stripe.com/8x2aEW3TvbZ30Ex8jDeAg05"
                   className="block w-full bg-wd-gold text-wd-dark py-3 rounded-xl font-bold text-lg hover:bg-wd-gold-dark transition-colors text-center"
                 >
                   Buy Now &rarr;
