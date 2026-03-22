@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { generateLoginCode } from "@/lib/utils";
+import { hashLoginCode, getAdminSessionFromRequest } from "@/lib/auth";
 
 // GET all participants for a registry
 export async function GET(request: NextRequest) {
@@ -25,7 +26,17 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ people: participants });
+    // Admin can see login codes; for participants, omit them
+    const adminSession = getAdminSessionFromRequest(request);
+    const isAdmin = adminSession && adminSession.groupId === registryId;
+
+    const people = participants.map(p => ({
+      ...p,
+      // Only show login code placeholder for admin (actual plaintext is shown only at creation)
+      loginCode: isAdmin ? '(hashed)' : undefined,
+    }));
+
+    return NextResponse.json({ people });
   } catch (error) {
     console.error("Error fetching participants:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -62,15 +73,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate unique login code for this registry
-    let loginCode = generateLoginCode();
+    let plaintextCode = generateLoginCode();
+    let hashedCode = hashLoginCode(plaintextCode);
     let exists = await prisma.participant.findFirst({
-      where: { registryId: groupId, loginCode },
+      where: { registryId: groupId, loginCode: hashedCode },
     });
 
     while (exists) {
-      loginCode = generateLoginCode();
+      plaintextCode = generateLoginCode();
+      hashedCode = hashLoginCode(plaintextCode);
       exists = await prisma.participant.findFirst({
-        where: { registryId: groupId, loginCode },
+        where: { registryId: groupId, loginCode: hashedCode },
       });
     }
 
@@ -78,12 +91,18 @@ export async function POST(request: NextRequest) {
       data: {
         name: name.trim(),
         email: email && email.trim() ? email.trim().toLowerCase() : null,
-        loginCode,
+        loginCode: hashedCode, // Store hashed
         registryId: groupId,
       },
     });
 
-    return NextResponse.json({ person: participant }, { status: 201 });
+    // Return the plaintext code only at creation time
+    return NextResponse.json({
+      person: {
+        ...participant,
+        loginCode: plaintextCode, // Show plaintext only once
+      }
+    }, { status: 201 });
   } catch (error) {
     console.error("Error creating participant:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

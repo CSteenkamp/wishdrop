@@ -11,19 +11,21 @@ export default function Login() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailLoading, setEmailLoading] = useState(false);
+  const [groupId, setGroupId] = useState("");
   const [groupName, setGroupName] = useState("");
   const [loginMethod, setLoginMethod] = useState<"code" | "email">("code");
   const router = useRouter();
 
   useEffect(() => {
     const name = sessionStorage.getItem("groupName");
-    const groupId = sessionStorage.getItem("groupId");
+    const gId = sessionStorage.getItem("groupId");
 
-    if (!groupId) {
+    if (!gId) {
       router.push("/");
       return;
     }
 
+    setGroupId(gId);
     setGroupName(name || "Your Registry");
   }, [router]);
 
@@ -32,8 +34,6 @@ export default function Login() {
     setError("");
     setSuccess("");
     setLoading(true);
-
-    const groupId = sessionStorage.getItem("groupId");
 
     if (!groupId) {
       setError("No registry selected. Please start over.");
@@ -56,13 +56,13 @@ export default function Login() {
         return;
       }
 
+      // Cookie is set automatically by the response
+      // Store minimal non-sensitive display data in sessionStorage for UI
       sessionStorage.setItem("personId", data.person.id);
       sessionStorage.setItem("personName", data.person.name);
-      sessionStorage.setItem("loginCode", data.person.loginCode);
       sessionStorage.setItem("groupId", data.person.group.id);
       sessionStorage.setItem("groupName", data.person.group.name);
       sessionStorage.setItem("isLoggedIn", "true");
-      sessionStorage.setItem("loginMethod", "code");
       router.push("/wishlist");
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -75,8 +75,6 @@ export default function Login() {
     setError("");
     setSuccess("");
     setEmailLoading(true);
-
-    const groupId = sessionStorage.getItem("groupId");
 
     if (!groupId) {
       setError("No registry selected. Please start over.");

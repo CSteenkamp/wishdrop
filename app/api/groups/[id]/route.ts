@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getSessionFromRequest, getAdminSessionFromRequest } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +10,18 @@ export async function GET(
 ) {
   try {
     const registryId = params.id;
+
+    // Verify caller has access to this registry
+    const session = getSessionFromRequest(request);
+    const adminSession = getAdminSessionFromRequest(request);
+
+    const isAuthorized =
+      (session && session.groupId === registryId) ||
+      (adminSession && adminSession.groupId === registryId);
+
+    if (!isAuthorized) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
 
     const registry = await prisma.registry.findUnique({
       where: { id: registryId },
@@ -38,6 +51,13 @@ export async function PATCH(
 ) {
   try {
     const registryId = params.id;
+
+    // Only admin can update registry
+    const adminSession = getAdminSessionFromRequest(request);
+    if (!adminSession || adminSession.groupId !== registryId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    }
+
     const { budgetAmount, budgetCurrency } = await request.json();
 
     const validCurrencies = [

@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { setAdminSessionCookie } from "@/lib/auth";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request);
+    const rateLimit = checkRateLimit(ip, 'admin');
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please try again later." },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(rateLimit.retryAfterMs / 1000)) } }
+      );
+    }
+
     const { password, groupId } = await request.json();
 
     if (!password) {
@@ -29,7 +40,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid password" }, { status: 401 });
     }
 
-    return NextResponse.json({
+    const responseData = {
       success: true,
       group: {
         id: adminConfig.registry.id,
@@ -37,6 +48,14 @@ export async function POST(request: NextRequest) {
         inviteCode: adminConfig.registry.inviteCode,
         occasion: adminConfig.registry.occasion,
       },
+    };
+
+    const response = NextResponse.json(responseData);
+
+    return setAdminSessionCookie(response, {
+      groupId: adminConfig.registry.id,
+      groupName: adminConfig.registry.name,
+      inviteCode: adminConfig.registry.inviteCode,
     });
   } catch (error) {
     console.error("Admin auth error:", error);

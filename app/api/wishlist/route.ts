@@ -1,25 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getSessionFromRequest } from "@/lib/auth";
 
 // POST/PUT update wishlist items for a participant
 export async function POST(request: NextRequest) {
   try {
+    const session = getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const personId = body.personId;
+
+    // Verify the caller is updating their own wishlist
+    if (personId !== session.personId) {
+      return NextResponse.json({ error: "You can only update your own wishlist" }, { status: 403 });
+    }
 
     // Accept both single item and array of items
     let items: any[];
     if (Array.isArray(body.items)) {
       items = body.items;
     } else if (body.title) {
-      // Single item passed as top-level fields
       items = [{ title: body.title, link: body.link, imageUrl: body.imageUrl, price: body.price, currency: body.currency, priority: body.priority, order: body.order }];
     } else {
       return NextResponse.json({ error: "Items array or single item fields required" }, { status: 400 });
-    }
-
-    if (!personId) {
-      return NextResponse.json({ error: "Participant ID is required" }, { status: 400 });
     }
 
     if (items.length < 1) {

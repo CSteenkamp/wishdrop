@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getSessionFromRequest, getAdminSessionFromRequest } from "@/lib/auth";
 
 export const dynamic = 'force-dynamic';
 
@@ -11,6 +12,18 @@ export async function GET(request: NextRequest) {
 
     if (!registryId) {
       return NextResponse.json({ error: "Registry ID is required" }, { status: 400 });
+    }
+
+    // Verify caller belongs to this registry
+    const session = getSessionFromRequest(request);
+    const adminSession = getAdminSessionFromRequest(request);
+
+    const isAuthorized =
+      (session && session.groupId === registryId) ||
+      (adminSession && adminSession.groupId === registryId);
+
+    if (!isAuthorized) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     // Get all participants with their wishlist items

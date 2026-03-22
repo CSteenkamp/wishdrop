@@ -23,12 +23,13 @@ function VerifyContent() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
+          // Cookie is set automatically by the response
+          // Store minimal display data in sessionStorage for UI
           sessionStorage.setItem("personId", data.person.id);
           sessionStorage.setItem("groupId", data.person.groupId);
           sessionStorage.setItem("groupName", data.person.groupName);
           sessionStorage.setItem("personName", data.person.name);
           sessionStorage.setItem("isLoggedIn", "true");
-          sessionStorage.setItem("loginMethod", "magic-link");
 
           setStatus("success");
           setMessage(`Welcome back, ${data.person.name}!`);

@@ -36,8 +36,8 @@ export default function CreateRegistry() {
       return;
     }
 
-    if (adminPassword.length < 6) {
-      setError("Admin password must be at least 6 characters");
+    if (adminPassword.length < 8) {
+      setError("Admin password must be at least 8 characters");
       setLoading(false);
       return;
     }

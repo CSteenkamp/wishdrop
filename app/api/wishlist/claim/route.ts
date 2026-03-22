@@ -1,25 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getSessionFromRequest } from "@/lib/auth";
 
 // POST claim a wishlist item
 export async function POST(request: NextRequest) {
   try {
-    const { itemId, participantId, participantName } = await request.json();
+    const session = getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    if (!itemId || !participantId || !participantName) {
+    const { itemId } = await request.json();
+
+    if (!itemId) {
       return NextResponse.json(
-        { error: "Item ID, participant ID, and participant name are required" },
+        { error: "Item ID is required" },
         { status: 400 }
       );
     }
 
+    // Use session data instead of trusting client-provided IDs
+    const participantId = session.personId;
+    const participantName = session.personName;
+
     // Find the item
     const item = await prisma.wishlistItem.findUnique({
       where: { id: itemId },
+      include: { participant: { select: { registryId: true } } },
     });
 
     if (!item) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
+    }
+
+    // Verify same registry
+    if (item.participant.registryId !== session.groupId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     if (item.claimedById) {

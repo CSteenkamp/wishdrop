@@ -1,14 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getSessionFromRequest } from "@/lib/auth";
 
 // POST unclaim a wishlist item
 export async function POST(request: NextRequest) {
   try {
-    const { itemId, participantId } = await request.json();
+    const session = getSessionFromRequest(request);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    if (!itemId || !participantId) {
+    const { itemId } = await request.json();
+
+    if (!itemId) {
       return NextResponse.json(
-        { error: "Item ID and participant ID are required" },
+        { error: "Item ID is required" },
         { status: 400 }
       );
     }
@@ -21,8 +27,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Item not found" }, { status: 404 });
     }
 
-    // Only the person who claimed it can unclaim it
-    if (item.claimedById !== participantId) {
+    // Only the person who claimed it can unclaim it (using session, not client data)
+    if (item.claimedById !== session.personId) {
       return NextResponse.json({ error: "You can only unclaim items you claimed" }, { status: 403 });
     }
 

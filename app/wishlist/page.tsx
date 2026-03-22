@@ -65,25 +65,10 @@ export default function Wishlist() {
 
   const loadAllData = async (pid: string, gid: string) => {
     try {
-      const loginCode = sessionStorage.getItem("loginCode");
-
-      const promises: Promise<Response>[] = [
+      const [itemsRes, groupRes] = await Promise.all([
         fetch(`/api/wishlist/items?registryId=${gid}`),
         fetch(`/api/groups/${gid}`),
-      ];
-
-      if (loginCode) {
-        promises.push(
-          fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ loginCode, groupId: gid }),
-          })
-        );
-      }
-
-      const responses = await Promise.all(promises);
-      const [itemsRes, groupRes] = responses;
+      ]);
 
       if (itemsRes.ok) {
         const data = await itemsRes.json();
@@ -184,7 +169,7 @@ export default function Wishlist() {
       const res = await fetch("/api/wishlist/claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId, participantId: personId, participantName: personName }),
+        body: JSON.stringify({ itemId }),
       });
 
       const data = await res.json();
@@ -211,7 +196,7 @@ export default function Wishlist() {
       const res = await fetch("/api/wishlist/unclaim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId, participantId: personId }),
+        body: JSON.stringify({ itemId }),
       });
 
       const data = await res.json();
@@ -230,7 +215,8 @@ export default function Wishlist() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
     sessionStorage.clear();
     router.push("/");
   };

@@ -84,6 +84,20 @@ model AdminConfig {
   @@map("AdminConfig")
 }
 
+model MagicLinkToken {
+  id        String   @id @default(cuid())
+  token     String   @unique // HMAC token hash
+  personId  String
+  email     String
+  groupId   String
+  expiresAt DateTime
+  usedAt    DateTime? // Null means unused; set on first use
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([expiresAt])
+}
+
 model Subscription {
   id                     String    @id @default(cuid())
   registryId             String    @unique @map("groupId")

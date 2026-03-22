@@ -11,9 +11,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Registry name is required" }, { status: 400 });
     }
 
-    if (!adminPassword || adminPassword.length < 6) {
+    if (!adminPassword || adminPassword.length < 8) {
       return NextResponse.json(
-        { error: "Admin password must be at least 6 characters" },
+        { error: "Admin password must be at least 8 characters" },
         { status: 400 }
       );
     }
@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
       exists = await prisma.registry.findUnique({ where: { inviteCode } });
     }
 
-    // Hash admin password
-    const hashedPassword = await bcrypt.hash(adminPassword, 10);
+    // Hash admin password with 12 rounds
+    const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
     // Create registry with admin config
     const registry = await prisma.registry.create({
