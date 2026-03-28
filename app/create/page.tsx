@@ -298,6 +298,12 @@ export default function CreateRegistry() {
             </div>
           )}
 
+          <p className="text-xs text-wd-charcoal/40 text-center">
+            By creating a registry, you agree to our{" "}
+            <a href="/terms" target="_blank" className="text-wd-gold hover:underline">Terms of Service</a>{" "}and{" "}
+            <a href="/privacy" target="_blank" className="text-wd-gold hover:underline">Privacy Policy</a>.
+          </p>
+
           <button
             type="submit"
             disabled={loading}

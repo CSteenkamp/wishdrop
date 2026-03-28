@@ -28,9 +28,15 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-wd-heading font-semibold mb-3">About</h3>
-            <p className="text-wd-charcoal/50 text-sm">
-              Built for every celebration. WishDrop makes gift registries effortless and fun for birthdays, weddings, baby showers, and any occasion.
+            <h3 className="text-wd-heading font-semibold mb-3">Legal</h3>
+            <nav aria-label="Legal links">
+              <ul className="space-y-2">
+                <li><Link href="/terms" className="text-wd-charcoal/50 hover:text-wd-gold transition-colors text-sm">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="text-wd-charcoal/50 hover:text-wd-gold transition-colors text-sm">Privacy Policy</Link></li>
+              </ul>
+            </nav>
+            <p className="text-wd-charcoal/50 text-sm mt-4">
+              Built for every celebration.
             </p>
           </div>
         </div>
