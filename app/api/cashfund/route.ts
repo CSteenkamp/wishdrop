@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Admin access required' }, { status: 401 });
   }
 
-  const { registryId, title, description, targetAmount, currency, imageUrl } = await request.json();
+  const { registryId, title, description, targetAmount, currency, imageUrl, paymentDetails } = await request.json();
   if (!registryId || !title?.trim()) {
     return NextResponse.json({ error: 'registryId and title required' }, { status: 400 });
   }
@@ -49,11 +49,29 @@ export async function POST(request: NextRequest) {
       targetAmount: targetAmount || null,
       currency: currency || 'USD',
       imageUrl: imageUrl || null,
+      paymentDetails: paymentDetails?.trim() || null,
       order: count,
     },
   });
 
   return NextResponse.json({ fund }, { status: 201 });
+}
+
+export async function PATCH(request: NextRequest) {
+  const adminSession = getAdminSessionFromRequest(request);
+  if (!adminSession) {
+    return NextResponse.json({ error: 'Admin access required' }, { status: 401 });
+  }
+
+  const { id, paymentDetails } = await request.json();
+  if (!id) return NextResponse.json({ error: 'Fund id required' }, { status: 400 });
+
+  const fund = await prisma.cashFund.update({
+    where: { id },
+    data: { paymentDetails: paymentDetails?.trim() || null },
+  });
+
+  return NextResponse.json({ fund });
 }
 
 export async function DELETE(request: NextRequest) {

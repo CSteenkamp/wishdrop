@@ -35,6 +35,7 @@ interface CashFund {
   description?: string | null;
   targetAmount?: number | null;
   currency: string;
+  paymentDetails?: string | null;
   totalRaised: number;
   contributorCount: number;
 }
@@ -62,6 +63,12 @@ export default function Wishlist() {
   const [contributeId, setContributeId] = useState<string | null>(null);
   const [contributeAmount, setContributeAmount] = useState("");
   const [contributeNote, setContributeNote] = useState("");
+  const [rsvpStatus, setRsvpStatus] = useState<string | null>(null);
+  const [rsvpHeadcount, setRsvpHeadcount] = useState("1");
+  const [rsvpNote, setRsvpNote] = useState("");
+  const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
+  const [rsvpAvailable, setRsvpAvailable] = useState(false);
+  const [itemLimit, setItemLimit] = useState(10);
   const router = useRouter();
 
   useEffect(() => {
@@ -128,6 +135,15 @@ export default function Wishlist() {
       if (cashRes.ok) {
         const cashData = await cashRes.json();
         setCashFunds(cashData.funds || []);
+      }
+
+      if (groupRes.ok) {
+        const gd = await groupRes.json();
+        const plan = gd.group?.plan;
+        if (plan === "unlimited" || plan === "plus" || plan === "pro") {
+          setRsvpAvailable(true);
+          setItemLimit(Infinity);
+        }
       }
 
       setLoading(false);
@@ -271,12 +287,37 @@ export default function Wishlist() {
       setContributeId(null);
       setContributeAmount("");
       setContributeNote("");
-      setSuccessMessage("Contribution recorded!");
+      // Find the fund to show payment details
+      const fund = cashFunds.find(f => f.id === cashFundId);
+      if (fund?.paymentDetails) {
+        setSuccessMessage(`Pledge recorded! Send payment to: ${fund.paymentDetails.split('\n')[0]}`);
+      } else {
+        setSuccessMessage("Pledge recorded! Contact the host to arrange payment.");
+      }
       if (groupId) loadAllData(personId, groupId);
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
       setError("An error occurred");
     }
+  };
+
+  const handleRsvp = async (status: string) => {
+    try {
+      const res = await fetch("/api/rsvp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status, headcount: parseInt(rsvpHeadcount) || 1, note: rsvpNote }),
+      });
+      if (res.ok) {
+        setRsvpSubmitted(true);
+        setRsvpStatus(status);
+        setSuccessMessage("RSVP submitted!");
+        setTimeout(() => setSuccessMessage(""), 3000);
+      } else {
+        const data = await res.json();
+        setError(data.error || "Failed to submit RSVP");
+      }
+    } catch { setError("An error occurred"); }
   };
 
   const handleLogout = async () => {
@@ -381,6 +422,18 @@ export default function Wishlist() {
               }`}
             >
               Funds
+            </button>
+          )}
+          {rsvpAvailable && (
+            <button
+              onClick={() => setActiveTab("rsvp" as any)}
+              className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition min-h-[48px] ${
+                (activeTab as string) === "rsvp"
+                  ? "bg-wd-gold text-white shadow-sm"
+                  : "text-wd-charcoal/50 hover:text-wd-heading"
+              }`}
+            >
+              RSVP
             </button>
           )}
         </div>
@@ -564,7 +617,8 @@ export default function Wishlist() {
         {/* Cash Funds Tab */}
         {activeTab === "funds" && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-wd-heading font-display">Contribution Funds</h2>
+            <h2 className="text-2xl font-bold text-wd-heading font-display">Gift Funds</h2>
+            <p className="text-sm text-wd-charcoal/50 mt-1 mb-2">Pledge an amount you&apos;d like to give — you&apos;ll arrange payment directly with the host.</p>
             {cashFunds.map((fund) => {
               const progress = fund.targetAmount ? Math.min((fund.totalRaised / fund.targetAmount) * 100, 100) : null;
               return (
@@ -582,7 +636,14 @@ export default function Wishlist() {
                       <div className="bg-wd-gold h-3 rounded-full transition-all" style={{ width: `${progress}%` }} />
                     </div>
                   )}
-                  <p className="text-xs text-wd-charcoal/50 mb-4">{fund.contributorCount} contributor{fund.contributorCount !== 1 ? "s" : ""}</p>
+                  <p className="text-xs text-wd-charcoal/50 mb-3">{fund.contributorCount} contributor{fund.contributorCount !== 1 ? "s" : ""}</p>
+
+                  {fund.paymentDetails && (
+                    <div className="bg-wd-cream/80 border border-wd-border rounded-lg p-3 mb-4">
+                      <p className="text-xs font-medium text-wd-charcoal/60 mb-1">How to pay:</p>
+                      <p className="text-sm text-wd-heading whitespace-pre-line">{fund.paymentDetails}</p>
+                    </div>
+                  )}
 
                   {contributeId === fund.id ? (
                     <div className="space-y-2 border-t border-wd-border pt-4">
@@ -606,7 +667,7 @@ export default function Wishlist() {
                           onClick={() => handleContribute(fund.id)}
                           className="flex-1 bg-wd-gold text-white py-2 rounded-xl font-semibold hover:bg-wd-gold-dark transition min-h-[44px]"
                         >
-                          Confirm Contribution
+                          Confirm Pledge
                         </button>
                         <button
                           onClick={() => { setContributeId(null); setContributeAmount(""); setContributeNote(""); }}
@@ -621,7 +682,7 @@ export default function Wishlist() {
                       onClick={() => setContributeId(fund.id)}
                       className="bg-wd-gold text-white px-6 py-2 rounded-xl font-semibold hover:bg-wd-gold-dark transition min-h-[44px]"
                     >
-                      Contribute
+                      Pledge Amount
                     </button>
                   )}
                 </div>
@@ -634,7 +695,10 @@ export default function Wishlist() {
         {activeTab === "my-items" && (
           <div className="bg-white p-6 rounded-2xl border border-wd-border card-glow">
             <h2 className="text-2xl font-bold text-wd-heading mb-4 font-display">My Wishlist</h2>
-            <p className="text-sm text-wd-charcoal/50 mb-4">Add items you&apos;d like to receive</p>
+            <p className="text-sm text-wd-charcoal/50 mb-4">
+              Add items you&apos;d like to receive
+              {itemLimit !== Infinity && <span className="ml-1">({myItems.filter(i => i.title.trim()).length}/{itemLimit} items)</span>}
+            </p>
 
             <div className="space-y-4">
               {myItems.map((item, index) => (
@@ -709,12 +773,17 @@ export default function Wishlist() {
                 </div>
               ))}
 
-              <button
-                onClick={handleAddItem}
-                className="w-full py-2 border-2 border-dashed border-wd-border rounded-lg text-wd-charcoal/40 hover:border-wd-gold hover:text-wd-gold transition min-h-[48px]"
-              >
-                + Add Item
-              </button>
+              {myItems.length < itemLimit && (
+                <button
+                  onClick={handleAddItem}
+                  className="w-full py-2 border-2 border-dashed border-wd-border rounded-lg text-wd-charcoal/40 hover:border-wd-gold hover:text-wd-gold transition min-h-[48px]"
+                >
+                  + Add Item
+                </button>
+              )}
+              {myItems.length >= itemLimit && itemLimit !== Infinity && (
+                <p className="text-sm text-wd-charcoal/50 text-center py-2">You&apos;ve reached the {itemLimit}-item limit on the free plan.</p>
+              )}
 
               <button
                 onClick={handleSaveWishlist}
@@ -724,6 +793,39 @@ export default function Wishlist() {
                 {saving ? "Saving..." : "Save Wishlist"}
               </button>
             </div>
+          </div>
+        )}
+
+        {/* RSVP Tab */}
+        {(activeTab as string) === "rsvp" && rsvpAvailable && (
+          <div className="bg-white p-6 rounded-2xl border border-wd-border card-glow">
+            <h2 className="text-2xl font-bold text-wd-heading mb-2 font-display">RSVP</h2>
+            <p className="text-sm text-wd-charcoal/50 mb-6">Let the host know if you&apos;re attending.</p>
+            {rsvpSubmitted ? (
+              <div className="text-center py-8">
+                <div className="text-5xl mb-3">{rsvpStatus === "yes" ? "🎉" : rsvpStatus === "maybe" ? "🤔" : "😔"}</div>
+                <p className="text-lg font-semibold text-wd-heading">
+                  {rsvpStatus === "yes" ? "You're going!" : rsvpStatus === "maybe" ? "Marked as maybe" : "Maybe next time!"}
+                </p>
+                <button onClick={() => setRsvpSubmitted(false)} className="mt-4 text-sm text-wd-gold hover:underline">Change RSVP</button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-wd-charcoal mb-2">How many people?</label>
+                  <input type="number" value={rsvpHeadcount} onChange={(e) => setRsvpHeadcount(e.target.value)} min="1" max="20" className="w-24 px-3 py-2 border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 text-wd-heading" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-wd-charcoal mb-2">Note <span className="text-wd-charcoal/40">(dietary needs, etc.)</span></label>
+                  <textarea value={rsvpNote} onChange={(e) => setRsvpNote(e.target.value)} className="w-full px-3 py-2 border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 text-wd-heading h-20 resize-none" placeholder="Any notes for the host..." />
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <button onClick={() => handleRsvp("yes")} className="bg-emerald-500 text-white py-3 rounded-xl font-semibold hover:bg-emerald-600 transition min-h-[48px]">Yes, attending!</button>
+                  <button onClick={() => handleRsvp("maybe")} className="bg-yellow-500 text-white py-3 rounded-xl font-semibold hover:bg-yellow-600 transition min-h-[48px]">Maybe</button>
+                  <button onClick={() => handleRsvp("no")} className="bg-red-400 text-white py-3 rounded-xl font-semibold hover:bg-red-500 transition min-h-[48px]">Can&apos;t make it</button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

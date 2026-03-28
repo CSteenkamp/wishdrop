@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { generateGroupInviteCode } from "@/lib/utils";
+import { generateGroupInviteCode, generateLoginCode } from "@/lib/utils";
+import { hashLoginCode } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 
 function generateSlug(name: string): string {
@@ -25,6 +26,7 @@ export async function POST(request: NextRequest) {
       coupleName2,
       personalMessage,
       coverImage,
+      addSelfAsParticipant,
     } = await request.json();
 
     if (!groupName || groupName.trim().length === 0) {
@@ -38,7 +40,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const validOccasions = ['birthday', 'wedding', 'baby_shower', 'christmas', 'housewarming', 'graduation', 'other'];
+    const validOccasions = ['birthday', 'wedding', 'baby_shower', 'anniversary', 'honeymoon', 'christmas', 'housewarming', 'graduation', 'other'];
     const selectedOccasion = occasion && validOccasions.includes(occasion) ? occasion : 'other';
 
     // Generate unique invite code
@@ -89,6 +91,26 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Auto-add the creator as the first participant if they provided their name
+    let ownerParticipant = null;
+    const ownerName = (coupleName1?.trim() && coupleName2?.trim())
+      ? `${coupleName1.trim()} & ${coupleName2.trim()}`
+      : coupleName1?.trim() || groupName.trim().split("'")[0] || 'Owner';
+
+    if (addSelfAsParticipant !== false) {
+      let ownerCode = generateLoginCode();
+      let ownerHashedCode = hashLoginCode(ownerCode);
+
+      const ownerParticipantRecord = await prisma.participant.create({
+        data: {
+          name: ownerName,
+          loginCode: ownerHashedCode,
+          registryId: registry.id,
+        },
+      });
+      ownerParticipant = { ...ownerParticipantRecord, loginCode: ownerCode };
+    }
+
     return NextResponse.json({
       group: {
         id: registry.id,
@@ -97,6 +119,11 @@ export async function POST(request: NextRequest) {
         slug: registry.slug,
         occasion: registry.occasion,
       },
+      ownerParticipant: ownerParticipant ? {
+        id: ownerParticipant.id,
+        name: ownerParticipant.name,
+        loginCode: ownerParticipant.loginCode,
+      } : null,
     }, { status: 201 });
   } catch (error) {
     console.error("Error creating registry:", error);

@@ -8,7 +8,7 @@ export default function CTASection() {
           Ready to Create Your Gift Registry?
         </h2>
         <p className="text-xl mb-10 text-wd-charcoal/60 max-w-2xl mx-auto">
-          Join thousands of people who use WishDrop to make gift-giving simple, fun, and duplicate-free
+          WishDrop makes gift-giving simple, fun, and duplicate-free. Get started in under a minute.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link

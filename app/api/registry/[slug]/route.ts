@@ -74,6 +74,7 @@ export async function GET(
     targetAmount: fund.targetAmount,
     currency: fund.currency,
     imageUrl: fund.imageUrl,
+    paymentDetails: fund.paymentDetails,
     totalRaised: fund.contributions.reduce((sum, c) => sum + c.amount, 0),
     contributorCount: fund.contributions.length,
   }));

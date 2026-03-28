@@ -4,21 +4,26 @@ export default function PricingSection() {
   const freeFeatures = [
     "1 registry",
     "Up to 10 items",
-    "Item claiming & notes",
+    "Up to 10 participants",
+    "Item claiming with personal notes",
     "Surprise-safe design",
+    "Thank-you reveal mode",
     "Shareable registry page",
     "Gift categories",
     "Cash / honeymoon funds",
+    "Email notifications",
     "Email magic link login",
     "Multi-currency support",
   ];
 
   const unlimitedFeatures = [
-    "Everything in Free",
-    "Unlimited registries",
-    "Unlimited items & participants",
-    "Thank-you reveal mode",
-    "Email notifications",
+    "Everything in Free, plus:",
+    "Unlimited registries, items & participants",
+    "Co-admins (invite others to manage)",
+    "RSVP tracking with headcount",
+    "Gift received & thank-you tracking",
+    "Registry analytics (views, activity)",
+    "Export gift list as CSV",
     "Pay once, use forever",
   ];
 
@@ -29,7 +34,7 @@ export default function PricingSection() {
           <span className="text-wd-gold">Simple</span> Pricing
         </h2>
         <p className="text-xl text-wd-charcoal/60 mb-10 max-w-2xl mx-auto">
-          Free for most people. One simple upgrade for power users.
+          Every feature included free. Upgrade only if you need more capacity.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">

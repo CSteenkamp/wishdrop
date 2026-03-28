@@ -2,8 +2,8 @@ export default function FeaturesSection() {
   const features = [
     { icon: "🎯", title: "Item Claiming", desc: "Friends claim items they want to buy. Once claimed, everyone knows — no more duplicate gifts. Unclaim anytime if plans change." },
     { icon: "🤫", title: "Surprise-Safe", desc: "The registry owner can't see who claimed what — only whether items are claimed or available. Enable reveal mode after the event for thank-you notes." },
-    { icon: "🔗", title: "Shareable Registry Page", desc: "Every registry gets a beautiful public page with a custom URL. Share it via text, email, social media, or embed it on your wedding website." },
-    { icon: "💵", title: "Cash & Honeymoon Funds", desc: "Create contribution funds for honeymoons, house deposits, or anything else. Guests pledge amounts with personal messages." },
+    { icon: "🔗", title: "Shareable Registry Page", desc: "Every registry gets a beautiful public page with a custom URL. Copy the link and share it via text, email, or anywhere you like." },
+    { icon: "💵", title: "Cash & Honeymoon Funds", desc: "Create gift funds for honeymoons, house deposits, or anything else. Guests can pledge amounts with personal messages — you arrange payment directly with them." },
     { icon: "📂", title: "Gift Categories", desc: "Organize items into categories like Kitchen, Bedroom, or Experiences. Guests can filter by category to find the perfect gift." },
     { icon: "💌", title: "Personal Notes", desc: "Guests can leave personal messages when claiming gifts. See heartfelt notes from loved ones when you enable reveal mode." },
     { icon: "🔐", title: "No Registration", desc: "No sign-ups, no accounts. Simple code-based login keeps things easy. Optionally use email magic links for a smoother experience." },

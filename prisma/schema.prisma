@@ -13,30 +13,36 @@ datasource db {
 
 // A registry represents a gift registry/wishlist for any occasion
 model Registry {
-  id             String   @id @default(cuid())
-  name           String   // "Sarah's Birthday Wishlist"
-  inviteCode     String   @unique  // Unique code for people to join this registry
-  slug           String?  @unique  // Vanity URL slug e.g. "sarah-and-james"
-  occasion       String   @default("other") // birthday, wedding, baby_shower, christmas, housewarming, graduation, other
-  eventDate      DateTime? // Optional event date
-  coverImage     String?  // Optional cover image URL
-  description    String?  // Optional description
-  coupleName1    String?  // e.g. "Sarah"
-  coupleName2    String?  // e.g. "James"
-  personalMessage String? // Message to guests
-  revealEnabled  Boolean  @default(false) // Post-event: reveal who gave what
-  plan           String   @default("free") // free, unlimited
-  budgetAmount   Float?   // Optional budget amount
-  budgetCurrency String   @default("USD") // Currency code
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String   // "Sarah's Birthday Wishlist"
+  inviteCode      String   @unique  // Unique code for people to join this registry
+  slug            String?  @unique  // Vanity URL slug e.g. "sarah-and-james"
+  occasion        String   @default("other") // birthday, wedding, baby_shower, christmas, housewarming, graduation, other
+  eventDate       DateTime? // Optional event date
+  coverImage      String?  // Optional cover image URL
+  description     String?  // Optional description
+  coupleName1     String?  // e.g. "Sarah"
+  coupleName2     String?  // e.g. "James"
+  personalMessage String?  // Message to guests
+  revealEnabled   Boolean  @default(false) // Post-event: reveal who gave what
+  // Branding (unlimited plan)
+  brandingHidden  Boolean  @default(false) // Hide "Powered by WishDrop"
+  brandingColor   String?  // Custom accent color hex
+  plan            String   @default("free") // free, unlimited
+  budgetAmount    Float?   // Optional budget amount
+  budgetCurrency  String   @default("USD") // Currency code
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   // Relations
   participants Participant[]
   adminConfig  AdminConfig?
+  coAdmins     CoAdmin[]
   subscription Subscription?
   categories   Category[]
   cashFunds    CashFund[]
+  rsvps        Rsvp[]
+  analytics    AnalyticsEvent[]
 
   @@map("Group")
 }
@@ -49,9 +55,10 @@ model Participant {
   loginCode  String   // Unique within this participant's context
   createdAt  DateTime @default(now())
 
-  registry      Registry       @relation(fields: [registryId], references: [id], onDelete: Cascade)
+  registry      Registry               @relation(fields: [registryId], references: [id], onDelete: Cascade)
   wishlistItems WishlistItem[]
   contributions CashFundContribution[]
+  rsvp          Rsvp?
 
   @@unique([registryId, loginCode])
   @@unique([registryId, email])
@@ -59,6 +66,20 @@ model Participant {
   @@index([loginCode])
   @@index([email])
   @@map("Person")
+}
+
+model CoAdmin {
+  id         String   @id @default(cuid())
+  registryId String
+  email      String
+  name       String?
+  addedAt    DateTime @default(now())
+
+  registry Registry @relation(fields: [registryId], references: [id], onDelete: Cascade)
+
+  @@unique([registryId, email])
+  @@index([registryId])
+  @@index([email])
 }
 
 model Category {
@@ -75,38 +96,42 @@ model Category {
 }
 
 model WishlistItem {
-  id            String   @id @default(cuid())
-  participantId String   @map("personId")
+  id            String    @id @default(cuid())
+  participantId String    @map("personId")
   participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
-  categoryId    String?  // Optional category
+  categoryId    String?   // Optional category
   category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   title         String
-  link          String   @default("")
-  imageUrl      String?  // Optional image URL
-  price         Float?   // Optional price
-  currency      String   @default("USD")
-  priority      String   @default("medium") // low, medium, high
+  link          String    @default("")
+  imageUrl      String?   // Optional image URL
+  price         Float?    // Optional price
+  currency      String    @default("USD")
+  priority      String    @default("medium") // low, medium, high
   order         Int
-  claimedById   String?  // ID of the participant who claimed this item
-  claimedByName String?  // Name of who claimed (for display)
+  claimedById   String?   // ID of the participant who claimed this item
+  claimedByName String?   // Name of who claimed (for display)
   claimedAt     DateTime? // When it was claimed
-  claimNote     String?  // Guest's personal note when claiming
-  createdAt     DateTime @default(now())
+  claimNote     String?   // Guest's personal note when claiming
+  received      Boolean   @default(false) // Admin marks gift as received
+  receivedAt    DateTime? // When it was marked received
+  thankYouSent  Boolean   @default(false) // Track thank-you note status
+  createdAt     DateTime  @default(now())
 
   @@index([participantId])
   @@index([categoryId])
 }
 
 model CashFund {
-  id          String   @id @default(cuid())
-  registryId  String
-  title       String   // "Honeymoon Fund", "House Deposit"
-  description String?
-  targetAmount Float?  // Optional goal amount
-  currency    String   @default("USD")
-  imageUrl    String?
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
+  id             String   @id @default(cuid())
+  registryId     String
+  title          String   // "Honeymoon Fund", "House Deposit"
+  description    String?
+  targetAmount   Float?   // Optional goal amount
+  currency       String   @default("USD")
+  imageUrl       String?
+  paymentDetails String?  // How to pay: bank details, PayPal, Venmo, M-Pesa, PIX, etc.
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
 
   registry      Registry               @relation(fields: [registryId], references: [id], onDelete: Cascade)
   contributions CashFundContribution[]
@@ -129,6 +154,38 @@ model CashFundContribution {
 
   @@index([cashFundId])
   @@index([participantId])
+}
+
+model Rsvp {
+  id            String   @id @default(cuid())
+  registryId    String
+  participantId String?  @unique // null if RSVP'd without joining
+  name          String
+  email         String?
+  status        String   @default("pending") // yes, no, maybe, pending
+  headcount     Int      @default(1) // How many people
+  note          String?  // Dietary needs, etc.
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  registry    Registry     @relation(fields: [registryId], references: [id], onDelete: Cascade)
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: SetNull)
+
+  @@index([registryId])
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  registryId String
+  event      String   // page_view, item_claimed, item_unclaimed, guest_joined, fund_contributed
+  metadata   String?  // JSON string for extra data
+  createdAt  DateTime @default(now())
+
+  registry Registry @relation(fields: [registryId], references: [id], onDelete: Cascade)
+
+  @@index([registryId])
+  @@index([createdAt])
+  @@index([registryId, event])
 }
 
 model AdminConfig {

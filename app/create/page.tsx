@@ -24,9 +24,9 @@ export default function CreateRegistry() {
     { value: "birthday", label: "Birthday", emoji: "🎂" },
     { value: "wedding", label: "Wedding", emoji: "💍" },
     { value: "baby_shower", label: "Baby Shower", emoji: "🍼" },
-    { value: "christmas", label: "Christmas", emoji: "🎄" },
+    { value: "anniversary", label: "Anniversary", emoji: "🎉" },
+    { value: "honeymoon", label: "Honeymoon", emoji: "🌴" },
     { value: "housewarming", label: "Housewarming", emoji: "🏡" },
-    { value: "graduation", label: "Graduation", emoji: "🎓" },
     { value: "other", label: "Other", emoji: "🎁" },
   ];
 
@@ -85,6 +85,12 @@ export default function CreateRegistry() {
       sessionStorage.setItem("inviteCode", data.group.inviteCode);
       sessionStorage.setItem("registrySlug", data.group.slug || "");
       sessionStorage.setItem("adminAuth", "pending");
+
+      // Store owner participant info so they can also log in as participant
+      if (data.ownerParticipant) {
+        sessionStorage.setItem("ownerParticipantId", data.ownerParticipant.id);
+        sessionStorage.setItem("ownerLoginCode", data.ownerParticipant.loginCode);
+      }
 
       router.push("/admin");
     } catch (err) {

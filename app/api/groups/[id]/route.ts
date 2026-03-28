@@ -98,6 +98,12 @@ export async function PATCH(
     if (description !== undefined) updateData.description = description?.trim() || null;
     if (coverImage !== undefined) updateData.coverImage = coverImage?.trim() || null;
     if (revealEnabled !== undefined) updateData.revealEnabled = !!revealEnabled;
+    if (body.name !== undefined && body.name?.trim()) updateData.name = body.name.trim();
+    if (body.eventDate !== undefined) updateData.eventDate = body.eventDate ? new Date(body.eventDate) : null;
+    if (body.occasion !== undefined) {
+      const validOccasions = ['birthday', 'wedding', 'baby_shower', 'anniversary', 'honeymoon', 'christmas', 'housewarming', 'graduation', 'other'];
+      if (validOccasions.includes(body.occasion)) updateData.occasion = body.occasion;
+    }
 
     const registry = await prisma.registry.update({
       where: { id: registryId },

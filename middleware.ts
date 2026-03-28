@@ -26,6 +26,7 @@ const PUBLIC_API_ROUTES = [
   '/api/stripe/checkout',
   '/api/registry/',
   '/api/health',
+  '/api/analytics',
 ];
 
 export function middleware(request: NextRequest) {

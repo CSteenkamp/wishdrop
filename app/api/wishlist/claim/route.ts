@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth";
 import { sendItemClaimedNotification } from "@/lib/notifications";
+import { trackEvent } from "@/lib/analytics";
 
 // POST claim a wishlist item
 export async function POST(request: NextRequest) {
@@ -58,6 +59,9 @@ export async function POST(request: NextRequest) {
         claimNote: note?.trim() || null,
       },
     });
+
+    // Track analytics
+    trackEvent(session.groupId, 'item_claimed', { itemTitle: item.title }).catch(() => {});
 
     // Send notification to item owner (fire-and-forget)
     const owner = await prisma.participant.findUnique({

@@ -86,14 +86,7 @@ const webAppStructuredData = {
     "url": "https://wishdrop.wagnerway.co.za"
   },
   "screenshot": "https://wishdrop.wagnerway.co.za/og-image.png",
-  "softwareVersion": "1.0",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "ratingCount": "820",
-    "bestRating": "5",
-    "worstRating": "1"
-  }
+  "softwareVersion": "1.0"
 };
 
 const faqStructuredData = {
@@ -105,7 +98,7 @@ const faqStructuredData = {
       "name": "What is WishDrop?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "WishDrop is a free online gift registry that works for any occasion — birthdays, weddings, baby showers, housewarmings, graduations, and more. Create a wishlist, share it with friends and family, and they can claim items to prevent duplicate gifts."
+        "text": "WishDrop is a free online gift registry that works for any occasion — birthdays, weddings, baby showers, anniversaries, honeymoons, and more. Create a wishlist, share it with friends and family, and they can claim items to prevent duplicate gifts."
       }
     },
     {
@@ -113,7 +106,7 @@ const faqStructuredData = {
       "name": "How does gift claiming work?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "When someone claims a gift on your registry, it's marked as 'claimed' so others know not to buy it. The best part: you (the registry owner) can't see WHO claimed each item, so the surprise is preserved! Other participants can see who claimed what to coordinate."
+        "text": "Guests join your registry with an invite code, then log in with a simple login code. They can click 'Claim This Gift' on any item. By default, you (the registry owner) can't see who claimed each item. After the event, you can turn on Reveal Mode to see who gave what for thank-you notes."
       }
     },
     {
@@ -121,15 +114,15 @@ const faqStructuredData = {
       "name": "Is WishDrop really free?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! The free plan gives you 1 registry with up to 10 items. For unlimited registries and items, there's a one-time $10 payment — no subscriptions, no recurring fees."
+        "text": "Yes! The free plan gives you 1 registry with up to 10 items and 10 participants. The Unlimited plan ($10 one-time) unlocks unlimited registries, items, and participants plus premium features. No subscriptions, no recurring fees."
       }
     },
     {
       "@type": "Question",
-      "name": "Do I need to create an account?",
+      "name": "How do participants join and log in?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No registration is required. Registry creators set an admin password, and participants get unique login codes. You can also use email magic links for passwordless login."
+        "text": "No traditional sign-up is required. The registry admin adds participants and each person gets a unique login code. Optionally, participants with an email can use a magic link for passwordless login."
       }
     },
     {
@@ -137,7 +130,7 @@ const faqStructuredData = {
       "name": "What occasions can I create a registry for?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "WishDrop supports birthdays, weddings, baby showers, Christmas, housewarmings, graduations, and a general 'other' category. You can create a gift registry for literally any occasion."
+        "text": "WishDrop supports birthdays, weddings, baby showers, anniversaries, honeymoons, housewarmings, and a general category for any other occasion."
       }
     },
     {
@@ -145,7 +138,7 @@ const faqStructuredData = {
       "name": "Can the registry owner see who claimed items?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No! This is a key feature of WishDrop. The registry owner can see which items are claimed vs available, but NOT who claimed them. This preserves the surprise. Other participants CAN see who claimed what to avoid duplicates."
+        "text": "By default, no — the registry owner can see which items are claimed vs available, but NOT who claimed them. After the event, you can turn on Reveal Mode to see who claimed each item for writing thank-you notes."
       }
     },
     {
@@ -153,7 +146,7 @@ const faqStructuredData = {
       "name": "Can I unclaim an item if I change my mind?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes, you can unclaim any item you've previously claimed. Just click the 'Unclaim' button and the item becomes available for others again."
+        "text": "Yes, you can unclaim any item you've previously claimed. Just click the 'Unclaim' button and the item becomes available for others again. Only the person who claimed it can unclaim it."
       }
     },
     {
@@ -161,7 +154,7 @@ const faqStructuredData = {
       "name": "Does WishDrop support different currencies?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! You can add prices to items in multiple currencies including USD, EUR, GBP, ZAR, and many more. You can also set a gift budget for the registry in any supported currency."
+        "text": "Yes! You can add prices in 18 currencies including USD, EUR, GBP, ZAR, and many more. You can also set a gift budget for the registry in any supported currency."
       }
     },
     {
@@ -169,7 +162,7 @@ const faqStructuredData = {
       "name": "Is WishDrop mobile-friendly?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Absolutely! WishDrop is designed mobile-first with touch-friendly buttons and responsive layouts. Create registries, browse items, and claim gifts from any device."
+        "text": "WishDrop is designed mobile-first with touch-friendly buttons and responsive layouts. Create registries, browse items, and claim gifts from any device."
       }
     },
     {
@@ -177,7 +170,7 @@ const faqStructuredData = {
       "name": "How do I share my registry?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "When you create a registry, you get a unique 6-character invite code. Share this code with friends and family — they enter it on the Join page to access your registry and start claiming items."
+        "text": "Every registry gets a shareable link and a 6-character invite code. Copy the link and send it to friends via text, email, or wherever you like. They can also enter the invite code on the Join page to access your registry."
       }
     }
   ]

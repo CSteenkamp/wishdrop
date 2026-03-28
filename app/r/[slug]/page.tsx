@@ -22,6 +22,7 @@ interface CashFund {
   description?: string | null;
   targetAmount?: number | null;
   currency: string;
+  paymentDetails?: string | null;
   totalRaised: number;
   contributorCount: number;
 }
@@ -53,6 +54,8 @@ const occasionEmojis: Record<string, string> = {
   birthday: "🎂",
   wedding: "💍",
   baby_shower: "🍼",
+  anniversary: "🎉",
+  honeymoon: "🌴",
   christmas: "🎄",
   housewarming: "🏡",
   graduation: "🎓",
@@ -77,6 +80,14 @@ export default function PublicRegistryPage() {
       .then((data) => {
         setRegistry(data.registry);
         setLoading(false);
+        // Track page view (fire-and-forget)
+        if (data.registry?.id) {
+          fetch('/api/analytics', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ registryId: data.registry.id, event: 'page_view' }),
+          }).catch(() => {});
+        }
       })
       .catch(() => {
         setError("Registry not found");
@@ -215,7 +226,8 @@ export default function PublicRegistryPage() {
         {/* Cash Funds */}
         {registry.cashFunds.length > 0 && (
           <div className="mb-10">
-            <h2 className="text-2xl font-bold text-wd-heading font-display mb-4">Contribution Funds</h2>
+            <h2 className="text-2xl font-bold text-wd-heading font-display mb-4">Gift Funds</h2>
+            <p className="text-sm text-wd-charcoal/50 mb-4">Pledge amounts — payment is arranged directly with the couple.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {registry.cashFunds.map((fund) => {
                 const progress = fund.targetAmount ? Math.min((fund.totalRaised / fund.targetAmount) * 100, 100) : null;
@@ -234,7 +246,13 @@ export default function PublicRegistryPage() {
                         <div className="bg-wd-gold h-2.5 rounded-full transition-all" style={{ width: `${progress}%` }} />
                       </div>
                     )}
-                    <p className="text-xs text-wd-charcoal/50">{fund.contributorCount} contributor{fund.contributorCount !== 1 ? "s" : ""}</p>
+                    <p className="text-xs text-wd-charcoal/50 mb-2">{fund.contributorCount} contributor{fund.contributorCount !== 1 ? "s" : ""}</p>
+                    {fund.paymentDetails && (
+                      <div className="bg-wd-cream/80 border border-wd-border rounded-lg p-3 mt-2">
+                        <p className="text-xs font-medium text-wd-charcoal/60 mb-1">How to contribute:</p>
+                        <p className="text-sm text-wd-heading whitespace-pre-line">{fund.paymentDetails}</p>
+                      </div>
+                    )}
                   </div>
                 );
               })}

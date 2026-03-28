@@ -4,9 +4,9 @@ const occasions = [
   { emoji: "🎂", name: "Birthday" },
   { emoji: "💍", name: "Wedding" },
   { emoji: "🍼", name: "Baby Shower" },
-  { emoji: "🎄", name: "Christmas" },
-  { emoji: "🏡", name: "Housewarming" },
-  { emoji: "🎓", name: "Graduation" },
+  { emoji: "🎉", name: "Anniversary" },
+  { emoji: "🌴", name: "Honeymoon" },
+  { emoji: "🎁", name: "Any Occasion" },
 ];
 
 export default function HeroSection() {

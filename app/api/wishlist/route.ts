@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth";
+import { enforceWishlistLimit } from "@/lib/plan-limits";
 
 // POST/PUT update wishlist items for a participant
 export async function POST(request: NextRequest) {
@@ -36,6 +37,18 @@ export async function POST(request: NextRequest) {
     const participant = await prisma.participant.findUnique({ where: { id: personId } });
     if (!participant) {
       return NextResponse.json({ error: "Participant not found" }, { status: 404 });
+    }
+
+    // Enforce plan limits
+    const validItems = items.filter((item: { title?: string }) => item.title && item.title.trim());
+    // Count claimed items (these persist and count toward the limit)
+    const claimedCount = await prisma.wishlistItem.count({
+      where: { participantId: personId, claimedById: { not: null } },
+    });
+    const totalAfterSave = validItems.length + claimedCount;
+    const limitCheck = await enforceWishlistLimit(participant.registryId, totalAfterSave);
+    if (!limitCheck.allowed) {
+      return NextResponse.json({ error: limitCheck.message }, { status: 403 });
     }
 
     // Delete existing wishlist items (only unclaimed ones to preserve claims)
