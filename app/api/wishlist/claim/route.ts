@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionFromRequest } from "@/lib/auth";
+import { sendItemClaimedNotification } from "@/lib/notifications";
 
 // POST claim a wishlist item
 export async function POST(request: NextRequest) {
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { itemId } = await request.json();
+    const { itemId, note } = await request.json();
 
     if (!itemId) {
       return NextResponse.json(
@@ -54,8 +55,18 @@ export async function POST(request: NextRequest) {
         claimedById: participantId,
         claimedByName: participantName,
         claimedAt: new Date(),
+        claimNote: note?.trim() || null,
       },
     });
+
+    // Send notification to item owner (fire-and-forget)
+    const owner = await prisma.participant.findUnique({
+      where: { id: item.participantId },
+      select: { email: true, name: true, registry: { select: { name: true } } },
+    });
+    if (owner?.email) {
+      sendItemClaimedNotification(owner.email, owner.name, item.title, owner.registry.name).catch(() => {});
+    }
 
     return NextResponse.json({ item: updatedItem });
   } catch (error) {

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wishdrop-config
+  namespace: wishdrop
+  labels:
+    app.kubernetes.io/name: wishdrop
+data:
+  NODE_ENV: "production"
+  NEXT_PUBLIC_APP_URL: "https://wishdrop.wagnerway.co.za"
+  NEXTAUTH_URL: "https://wishdrop.wagnerway.co.za"
+  MAGIC_LINK_EXPIRES_MINUTES: "15"
+  EMAIL_HOST: "smtp.gmail.com"
+  EMAIL_PORT: "587"
+  EMAIL_FROM: "WishDrop <noreply@wagnerway.co.za>"

@@ -16,10 +16,15 @@ model Registry {
   id             String   @id @default(cuid())
   name           String   // "Sarah's Birthday Wishlist"
   inviteCode     String   @unique  // Unique code for people to join this registry
+  slug           String?  @unique  // Vanity URL slug e.g. "sarah-and-james"
   occasion       String   @default("other") // birthday, wedding, baby_shower, christmas, housewarming, graduation, other
   eventDate      DateTime? // Optional event date
   coverImage     String?  // Optional cover image URL
   description    String?  // Optional description
+  coupleName1    String?  // e.g. "Sarah"
+  coupleName2    String?  // e.g. "James"
+  personalMessage String? // Message to guests
+  revealEnabled  Boolean  @default(false) // Post-event: reveal who gave what
   plan           String   @default("free") // free, unlimited
   budgetAmount   Float?   // Optional budget amount
   budgetCurrency String   @default("USD") // Currency code
@@ -30,6 +35,8 @@ model Registry {
   participants Participant[]
   adminConfig  AdminConfig?
   subscription Subscription?
+  categories   Category[]
+  cashFunds    CashFund[]
 
   @@map("Group")
 }
@@ -44,6 +51,7 @@ model Participant {
 
   registry      Registry       @relation(fields: [registryId], references: [id], onDelete: Cascade)
   wishlistItems WishlistItem[]
+  contributions CashFundContribution[]
 
   @@unique([registryId, loginCode])
   @@unique([registryId, email])
@@ -53,10 +61,25 @@ model Participant {
   @@map("Person")
 }
 
+model Category {
+  id         String @id @default(cuid())
+  registryId String
+  name       String // "Kitchen", "Bedroom", "Honeymoon"
+  order      Int    @default(0)
+
+  registry Registry       @relation(fields: [registryId], references: [id], onDelete: Cascade)
+  items    WishlistItem[]
+
+  @@unique([registryId, name])
+  @@index([registryId])
+}
+
 model WishlistItem {
   id            String   @id @default(cuid())
   participantId String   @map("personId")
   participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  categoryId    String?  // Optional category
+  category      Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   title         String
   link          String   @default("")
   imageUrl      String?  // Optional image URL
@@ -67,8 +90,44 @@ model WishlistItem {
   claimedById   String?  // ID of the participant who claimed this item
   claimedByName String?  // Name of who claimed (for display)
   claimedAt     DateTime? // When it was claimed
+  claimNote     String?  // Guest's personal note when claiming
   createdAt     DateTime @default(now())
 
+  @@index([participantId])
+  @@index([categoryId])
+}
+
+model CashFund {
+  id          String   @id @default(cuid())
+  registryId  String
+  title       String   // "Honeymoon Fund", "House Deposit"
+  description String?
+  targetAmount Float?  // Optional goal amount
+  currency    String   @default("USD")
+  imageUrl    String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  registry      Registry               @relation(fields: [registryId], references: [id], onDelete: Cascade)
+  contributions CashFundContribution[]
+
+  @@index([registryId])
+}
+
+model CashFundContribution {
+  id            String   @id @default(cuid())
+  cashFundId    String
+  participantId String?  // null if anonymous
+  name          String   // Display name of contributor
+  amount        Float
+  currency      String   @default("USD")
+  note          String?  // Personal message
+  createdAt     DateTime @default(now())
+
+  cashFund    CashFund     @relation(fields: [cashFundId], references: [id], onDelete: Cascade)
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: SetNull)
+
+  @@index([cashFundId])
   @@index([participantId])
 }
 

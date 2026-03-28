@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 interface WishlistItem {
   id?: string;
@@ -12,8 +11,10 @@ interface WishlistItem {
   currency?: string;
   priority?: string;
   imageUrl?: string | null;
+  categoryId?: string | null;
   claimedById?: string | null;
   claimedByName?: string | null;
+  claimNote?: string | null;
   participantId?: string;
 }
 
@@ -23,6 +24,21 @@ interface ParticipantWithItems {
   wishlistItems: WishlistItem[];
 }
 
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface CashFund {
+  id: string;
+  title: string;
+  description?: string | null;
+  targetAmount?: number | null;
+  currency: string;
+  totalRaised: number;
+  contributorCount: number;
+}
+
 export default function Wishlist() {
   const [personId, setPersonId] = useState("");
   const [personName, setPersonName] = useState("");
@@ -30,14 +46,22 @@ export default function Wishlist() {
   const [groupId, setGroupId] = useState("");
   const [myItems, setMyItems] = useState<WishlistItem[]>([{ title: "", link: "" }]);
   const [allParticipants, setAllParticipants] = useState<ParticipantWithItems[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [cashFunds, setCashFunds] = useState<CashFund[]>([]);
   const [budget, setBudget] = useState<{ amount?: number; currency?: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [claiming, setClaiming] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [activeTab, setActiveTab] = useState<"my-items" | "registry">("registry");
+  const [activeTab, setActiveTab] = useState<"my-items" | "registry" | "funds">("registry");
   const [filterMode, setFilterMode] = useState<"all" | "available" | "claimed">("all");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [claimNoteId, setClaimNoteId] = useState<string | null>(null);
+  const [claimNoteText, setClaimNoteText] = useState("");
+  const [contributeId, setContributeId] = useState<string | null>(null);
+  const [contributeAmount, setContributeAmount] = useState("");
+  const [contributeNote, setContributeNote] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -65,9 +89,10 @@ export default function Wishlist() {
 
   const loadAllData = async (pid: string, gid: string) => {
     try {
-      const [itemsRes, groupRes] = await Promise.all([
+      const [itemsRes, groupRes, cashRes] = await Promise.all([
         fetch(`/api/wishlist/items?registryId=${gid}`),
         fetch(`/api/groups/${gid}`),
+        fetch(`/api/cashfund?registryId=${gid}`),
       ]);
 
       if (itemsRes.ok) {
@@ -83,6 +108,8 @@ export default function Wishlist() {
             price: item.price,
             currency: item.currency || 'USD',
             priority: item.priority || 'medium',
+            imageUrl: item.imageUrl,
+            categoryId: item.categoryId,
           })));
         }
       }
@@ -95,6 +122,12 @@ export default function Wishlist() {
             currency: groupData.group.budgetCurrency || "USD"
           });
         }
+        setCategories(groupData.group?.categories || []);
+      }
+
+      if (cashRes.ok) {
+        const cashData = await cashRes.json();
+        setCashFunds(cashData.funds || []);
       }
 
       setLoading(false);
@@ -111,9 +144,7 @@ export default function Wishlist() {
   };
 
   const handleAddItem = () => {
-    if (myItems.length < 10) {
-      setMyItems([...myItems, { title: "", link: "" }]);
-    }
+    setMyItems([...myItems, { title: "", link: "" }]);
   };
 
   const handleRemoveItem = (index: number) => {
@@ -161,7 +192,7 @@ export default function Wishlist() {
     }
   };
 
-  const handleClaim = async (itemId: string) => {
+  const handleClaim = async (itemId: string, note?: string) => {
     setClaiming(itemId);
     setError("");
 
@@ -169,7 +200,7 @@ export default function Wishlist() {
       const res = await fetch("/api/wishlist/claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId }),
+        body: JSON.stringify({ itemId, note }),
       });
 
       const data = await res.json();
@@ -180,6 +211,8 @@ export default function Wishlist() {
         return;
       }
 
+      setClaimNoteId(null);
+      setClaimNoteText("");
       if (groupId) loadAllData(personId, groupId);
       setClaiming(null);
     } catch (err) {
@@ -215,6 +248,37 @@ export default function Wishlist() {
     }
   };
 
+  const handleContribute = async (cashFundId: string) => {
+    const amount = parseFloat(contributeAmount);
+    if (!amount || amount <= 0) {
+      setError("Please enter a valid amount");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/cashfund/contribute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cashFundId, amount, note: contributeNote }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Failed to contribute");
+        return;
+      }
+
+      setContributeId(null);
+      setContributeAmount("");
+      setContributeNote("");
+      setSuccessMessage("Contribution recorded!");
+      if (groupId) loadAllData(personId, groupId);
+      setTimeout(() => setSuccessMessage(""), 3000);
+    } catch (err) {
+      setError("An error occurred");
+    }
+  };
+
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     sessionStorage.clear();
@@ -241,11 +305,16 @@ export default function Wishlist() {
     p.wishlistItems.map(item => ({ ...item, ownerName: p.name, ownerId: p.id }))
   );
 
-  const filteredItems = allOtherItems.filter(item => {
-    if (filterMode === "available") return !item.claimedById;
-    if (filterMode === "claimed") return !!item.claimedById;
-    return true;
-  });
+  const filteredItems = allOtherItems
+    .filter(item => {
+      if (filterMode === "available") return !item.claimedById;
+      if (filterMode === "claimed") return !!item.claimedById;
+      return true;
+    })
+    .filter(item => {
+      if (activeCategory) return item.categoryId === activeCategory;
+      return true;
+    });
 
   return (
     <div className="min-h-screen bg-wd-cream p-4 md:p-8">
@@ -302,13 +371,25 @@ export default function Wishlist() {
           >
             My Wishlist
           </button>
+          {cashFunds.length > 0 && (
+            <button
+              onClick={() => setActiveTab("funds")}
+              className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition min-h-[48px] ${
+                activeTab === "funds"
+                  ? "bg-wd-gold text-white shadow-sm"
+                  : "text-wd-charcoal/50 hover:text-wd-heading"
+              }`}
+            >
+              Funds
+            </button>
+          )}
         </div>
 
         {/* Registry Items Tab */}
         {activeTab === "registry" && (
           <div>
-            {/* Filter */}
-            <div className="flex gap-2 mb-6 flex-wrap">
+            {/* Filters Row */}
+            <div className="flex flex-wrap gap-2 mb-6">
               {(["all", "available", "claimed"] as const).map((mode) => (
                 <button
                   key={mode}
@@ -322,6 +403,30 @@ export default function Wishlist() {
                   {mode === "all" ? "All Items" : mode === "available" ? "Available" : "Claimed"}
                 </button>
               ))}
+              {categories.length > 0 && (
+                <>
+                  <div className="w-px bg-wd-border mx-1 self-stretch" />
+                  <button
+                    onClick={() => setActiveCategory(null)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                      !activeCategory ? "bg-wd-charcoal text-white" : "bg-white text-wd-charcoal/50 border border-wd-border"
+                    }`}
+                  >
+                    All Categories
+                  </button>
+                  {categories.map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveCategory(cat.id)}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        activeCategory === cat.id ? "bg-wd-charcoal text-white" : "bg-white text-wd-charcoal/50 border border-wd-border"
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </>
+              )}
             </div>
 
             {filteredItems.length === 0 ? (
@@ -343,6 +448,13 @@ export default function Wishlist() {
                       item.claimedById ? "border-emerald-200" : "border-wd-border"
                     }`}
                   >
+                    {/* Image */}
+                    {item.imageUrl && (
+                      <div className="w-full h-40 rounded-lg overflow-hidden mb-3 bg-wd-cream">
+                        <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+
                     <div className="flex justify-between items-start mb-2">
                       <div className="min-w-0 flex-1">
                         <p className="text-xs text-wd-gold font-medium mb-1">For {item.ownerName}</p>
@@ -377,37 +489,144 @@ export default function Wishlist() {
                     {item.claimedById ? (
                       <div>
                         {item.claimedById === personId ? (
-                          <div className="flex items-center justify-between">
-                            <span className="text-emerald-600 text-sm font-medium">You claimed this</span>
-                            <button
-                              onClick={() => item.id && handleUnclaim(item.id)}
-                              disabled={claiming === item.id}
-                              className="bg-white text-wd-charcoal px-4 py-2 rounded-lg text-sm hover:bg-wd-cream transition border border-wd-border min-h-[44px] disabled:opacity-50"
-                            >
-                              {claiming === item.id ? "..." : "Unclaim"}
-                            </button>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-emerald-600 text-sm font-medium">You claimed this</span>
+                              <button
+                                onClick={() => item.id && handleUnclaim(item.id)}
+                                disabled={claiming === item.id}
+                                className="bg-white text-wd-charcoal px-4 py-2 rounded-lg text-sm hover:bg-wd-cream transition border border-wd-border min-h-[44px] disabled:opacity-50"
+                              >
+                                {claiming === item.id ? "..." : "Unclaim"}
+                              </button>
+                            </div>
+                            {item.claimNote && (
+                              <p className="text-xs text-wd-charcoal/50 italic bg-wd-cream/50 px-3 py-2 rounded-lg">
+                                Your note: &ldquo;{item.claimNote}&rdquo;
+                              </p>
+                            )}
                           </div>
                         ) : (
                           <div className="bg-wd-gold/10 border border-wd-gold/20 rounded-lg px-3 py-2">
                             <span className="text-wd-rose-gold text-sm">
                               Claimed by {item.claimedByName}
                             </span>
+                            {item.claimNote && (
+                              <p className="text-xs text-wd-charcoal/50 mt-1 italic">&ldquo;{item.claimNote}&rdquo;</p>
+                            )}
                           </div>
                         )}
                       </div>
                     ) : (
-                      <button
-                        onClick={() => item.id && handleClaim(item.id)}
-                        disabled={claiming === item.id}
-                        className="w-full bg-wd-gold text-white py-3 rounded-xl font-semibold hover:bg-wd-gold-dark transition-all duration-300 disabled:opacity-50 min-h-[48px]"
-                      >
-                        {claiming === item.id ? "Claiming..." : "Claim This Gift"}
-                      </button>
+                      <div>
+                        {claimNoteId === item.id ? (
+                          <div className="space-y-2">
+                            <textarea
+                              value={claimNoteText}
+                              onChange={(e) => setClaimNoteText(e.target.value)}
+                              placeholder="Add a personal note (optional)"
+                              className="w-full px-3 py-2 text-sm bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 text-wd-heading placeholder-wd-charcoal/30 h-16 resize-none"
+                            />
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => item.id && handleClaim(item.id, claimNoteText)}
+                                disabled={claiming === item.id}
+                                className="flex-1 bg-wd-gold text-white py-2 rounded-xl font-semibold hover:bg-wd-gold-dark transition disabled:opacity-50 min-h-[44px]"
+                              >
+                                {claiming === item.id ? "Claiming..." : "Confirm Claim"}
+                              </button>
+                              <button
+                                onClick={() => { setClaimNoteId(null); setClaimNoteText(""); }}
+                                className="px-4 py-2 rounded-xl border border-wd-border text-wd-charcoal/50 hover:bg-wd-cream transition min-h-[44px]"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => { setClaimNoteId(item.id || null); setClaimNoteText(""); }}
+                            disabled={claiming === item.id}
+                            className="w-full bg-wd-gold text-white py-3 rounded-xl font-semibold hover:bg-wd-gold-dark transition-all duration-300 disabled:opacity-50 min-h-[48px]"
+                          >
+                            Claim This Gift
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Cash Funds Tab */}
+        {activeTab === "funds" && (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-wd-heading font-display">Contribution Funds</h2>
+            {cashFunds.map((fund) => {
+              const progress = fund.targetAmount ? Math.min((fund.totalRaised / fund.targetAmount) * 100, 100) : null;
+              return (
+                <div key={fund.id} className="bg-white p-6 rounded-2xl border border-wd-border card-glow">
+                  <h3 className="text-xl font-semibold text-wd-heading mb-1">{fund.title}</h3>
+                  {fund.description && <p className="text-sm text-wd-charcoal/60 mb-3">{fund.description}</p>}
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-2xl font-bold text-wd-gold">{fund.currency} {fund.totalRaised.toFixed(0)}</span>
+                    {fund.targetAmount && (
+                      <span className="text-sm text-wd-charcoal/50">of {fund.currency} {fund.targetAmount} goal</span>
+                    )}
+                  </div>
+                  {progress !== null && (
+                    <div className="w-full bg-wd-cream rounded-full h-3 mb-3">
+                      <div className="bg-wd-gold h-3 rounded-full transition-all" style={{ width: `${progress}%` }} />
+                    </div>
+                  )}
+                  <p className="text-xs text-wd-charcoal/50 mb-4">{fund.contributorCount} contributor{fund.contributorCount !== 1 ? "s" : ""}</p>
+
+                  {contributeId === fund.id ? (
+                    <div className="space-y-2 border-t border-wd-border pt-4">
+                      <input
+                        type="number"
+                        value={contributeAmount}
+                        onChange={(e) => setContributeAmount(e.target.value)}
+                        placeholder={`Amount (${fund.currency})`}
+                        className="w-full px-3 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 text-wd-heading"
+                        step="0.01"
+                        min="1"
+                      />
+                      <textarea
+                        value={contributeNote}
+                        onChange={(e) => setContributeNote(e.target.value)}
+                        placeholder="Add a personal message (optional)"
+                        className="w-full px-3 py-2 text-sm bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 text-wd-heading placeholder-wd-charcoal/30 h-16 resize-none"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleContribute(fund.id)}
+                          className="flex-1 bg-wd-gold text-white py-2 rounded-xl font-semibold hover:bg-wd-gold-dark transition min-h-[44px]"
+                        >
+                          Confirm Contribution
+                        </button>
+                        <button
+                          onClick={() => { setContributeId(null); setContributeAmount(""); setContributeNote(""); }}
+                          className="px-4 py-2 rounded-xl border border-wd-border text-wd-charcoal/50 hover:bg-wd-cream transition min-h-[44px]"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setContributeId(fund.id)}
+                      className="bg-wd-gold text-white px-6 py-2 rounded-xl font-semibold hover:bg-wd-gold-dark transition min-h-[44px]"
+                    >
+                      Contribute
+                    </button>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
 
@@ -447,7 +666,14 @@ export default function Wishlist() {
                       placeholder="https://example.com/product (optional)"
                       className="w-full px-3 py-2 bg-white border border-wd-border rounded focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
                     />
-                    <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="url"
+                      value={item.imageUrl || ""}
+                      onChange={(e) => handleItemChange(index, "imageUrl", e.target.value)}
+                      placeholder="Image URL (optional)"
+                      className="w-full px-3 py-2 bg-white border border-wd-border rounded focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
+                    />
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       <input
                         type="number"
                         value={item.price || ""}
@@ -466,19 +692,29 @@ export default function Wishlist() {
                         <option value="medium">Medium Priority</option>
                         <option value="low">Low Priority</option>
                       </select>
+                      {categories.length > 0 && (
+                        <select
+                          value={item.categoryId || ""}
+                          onChange={(e) => handleItemChange(index, "categoryId", e.target.value)}
+                          className="w-full px-3 py-2 bg-white border border-wd-border rounded focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading"
+                        >
+                          <option value="">No Category</option>
+                          {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                          ))}
+                        </select>
+                      )}
                     </div>
                   </div>
                 </div>
               ))}
 
-              {myItems.length < 10 && (
-                <button
-                  onClick={handleAddItem}
-                  className="w-full py-2 border-2 border-dashed border-wd-border rounded-lg text-wd-charcoal/40 hover:border-wd-gold hover:text-wd-gold transition min-h-[48px]"
-                >
-                  + Add Item
-                </button>
-              )}
+              <button
+                onClick={handleAddItem}
+                className="w-full py-2 border-2 border-dashed border-wd-border rounded-lg text-wd-charcoal/40 hover:border-wd-gold hover:text-wd-gold transition min-h-[48px]"
+              >
+                + Add Item
+              </button>
 
               <button
                 onClick={handleSaveWishlist}

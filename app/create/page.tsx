@@ -9,21 +9,28 @@ export default function CreateRegistry() {
   const [occasion, setOccasion] = useState("other");
   const [eventDate, setEventDate] = useState("");
   const [description, setDescription] = useState("");
+  const [coupleName1, setCoupleName1] = useState("");
+  const [coupleName2, setCoupleName2] = useState("");
+  const [personalMessage, setPersonalMessage] = useState("");
+  const [coverImage, setCoverImage] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const router = useRouter();
 
   const occasions = [
-    { value: "birthday", label: "Birthday 🎂" },
-    { value: "wedding", label: "Wedding 💍" },
-    { value: "baby_shower", label: "Baby Shower 🍼" },
-    { value: "christmas", label: "Christmas 🎄" },
-    { value: "housewarming", label: "Housewarming 🏡" },
-    { value: "graduation", label: "Graduation 🎓" },
-    { value: "other", label: "Other 🎁" },
+    { value: "birthday", label: "Birthday", emoji: "🎂" },
+    { value: "wedding", label: "Wedding", emoji: "💍" },
+    { value: "baby_shower", label: "Baby Shower", emoji: "🍼" },
+    { value: "christmas", label: "Christmas", emoji: "🎄" },
+    { value: "housewarming", label: "Housewarming", emoji: "🏡" },
+    { value: "graduation", label: "Graduation", emoji: "🎓" },
+    { value: "other", label: "Other", emoji: "🎁" },
   ];
+
+  const isWedding = occasion === "wedding";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +65,10 @@ export default function CreateRegistry() {
           occasion,
           eventDate: eventDate || undefined,
           description: description || undefined,
+          coupleName1: coupleName1 || undefined,
+          coupleName2: coupleName2 || undefined,
+          personalMessage: personalMessage || undefined,
+          coverImage: coverImage || undefined,
         }),
       });
 
@@ -72,6 +83,7 @@ export default function CreateRegistry() {
       sessionStorage.setItem("groupId", data.group.id);
       sessionStorage.setItem("groupName", data.group.name);
       sessionStorage.setItem("inviteCode", data.group.inviteCode);
+      sessionStorage.setItem("registrySlug", data.group.slug || "");
       sessionStorage.setItem("adminAuth", "pending");
 
       router.push("/admin");
@@ -83,7 +95,7 @@ export default function CreateRegistry() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-wd-cream p-4">
-      <div className="bg-white p-8 rounded-2xl border border-wd-border card-glow w-full max-w-md">
+      <div className="bg-white p-8 rounded-2xl border border-wd-border card-glow w-full max-w-lg">
         <div className="text-center mb-6">
           <div className="text-4xl mb-3">✨</div>
           <h1 className="text-3xl font-bold text-wd-heading mb-2 font-display tracking-wide">
@@ -105,26 +117,74 @@ export default function CreateRegistry() {
               value={registryName}
               onChange={(e) => setRegistryName(e.target.value)}
               className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
-              placeholder="Sarah's Birthday Wishlist"
+              placeholder="Sarah & James's Wedding Registry"
               required
             />
           </div>
 
+          {/* Occasion Picker */}
           <div>
-            <label htmlFor="occasion" className="block text-sm font-medium text-wd-charcoal mb-2">
-              Occasion
-            </label>
-            <select
-              id="occasion"
-              value={occasion}
-              onChange={(e) => setOccasion(e.target.value)}
-              className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading"
-            >
+            <label className="block text-sm font-medium text-wd-charcoal mb-2">Occasion</label>
+            <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
               {occasions.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <button
+                  key={o.value}
+                  type="button"
+                  onClick={() => setOccasion(o.value)}
+                  className={`flex flex-col items-center p-2 rounded-lg border transition text-center ${
+                    occasion === o.value
+                      ? "border-wd-gold bg-wd-gold/10 text-wd-gold"
+                      : "border-wd-border text-wd-charcoal/50 hover:border-wd-gold/50"
+                  }`}
+                >
+                  <span className="text-xl">{o.emoji}</span>
+                  <span className="text-xs mt-1">{o.label}</span>
+                </button>
               ))}
-            </select>
+            </div>
           </div>
+
+          {/* Couple Names (show prominently for weddings, but available for all) */}
+          {(isWedding || coupleName1 || coupleName2) && (
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="coupleName1" className="block text-sm font-medium text-wd-charcoal mb-2">
+                  {isWedding ? "Partner 1" : "Your Name"} <span className="text-wd-charcoal/40">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  id="coupleName1"
+                  value={coupleName1}
+                  onChange={(e) => setCoupleName1(e.target.value)}
+                  className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
+                  placeholder="Sarah"
+                />
+              </div>
+              <div>
+                <label htmlFor="coupleName2" className="block text-sm font-medium text-wd-charcoal mb-2">
+                  {isWedding ? "Partner 2" : "Partner"} <span className="text-wd-charcoal/40">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  id="coupleName2"
+                  value={coupleName2}
+                  onChange={(e) => setCoupleName2(e.target.value)}
+                  className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
+                  placeholder="James"
+                />
+              </div>
+            </div>
+          )}
+
+          {!isWedding && !coupleName1 && !coupleName2 && (
+            <button
+              type="button"
+              onClick={() => setCoupleName1(" ")}
+              className="text-sm text-wd-gold hover:underline"
+            >
+              + Add couple/partner names
+            </button>
+          )}
 
           <div>
             <label htmlFor="eventDate" className="block text-sm font-medium text-wd-charcoal mb-2">
@@ -152,6 +212,46 @@ export default function CreateRegistry() {
             />
           </div>
 
+          {/* Advanced Options Toggle */}
+          <button
+            type="button"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="text-sm text-wd-gold hover:underline flex items-center gap-1"
+          >
+            {showAdvanced ? "Hide" : "Show"} advanced options
+            <svg className={`w-3 h-3 transition ${showAdvanced ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          </button>
+
+          {showAdvanced && (
+            <div className="space-y-4 border-t border-wd-border pt-4">
+              <div>
+                <label htmlFor="personalMessage" className="block text-sm font-medium text-wd-charcoal mb-2">
+                  Personal Message for Guests <span className="text-wd-charcoal/40">(optional)</span>
+                </label>
+                <textarea
+                  id="personalMessage"
+                  value={personalMessage}
+                  onChange={(e) => setPersonalMessage(e.target.value)}
+                  className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30 h-20 resize-none"
+                  placeholder="We're so excited to celebrate with you!"
+                />
+              </div>
+              <div>
+                <label htmlFor="coverImage" className="block text-sm font-medium text-wd-charcoal mb-2">
+                  Cover Image URL <span className="text-wd-charcoal/40">(optional)</span>
+                </label>
+                <input
+                  type="url"
+                  id="coverImage"
+                  value={coverImage}
+                  onChange={(e) => setCoverImage(e.target.value)}
+                  className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
+                  placeholder="https://example.com/our-photo.jpg"
+                />
+              </div>
+            </div>
+          )}
+
           <div>
             <label htmlFor="adminPassword" className="block text-sm font-medium text-wd-charcoal mb-2">
               Admin Password
@@ -162,9 +262,9 @@ export default function CreateRegistry() {
               value={adminPassword}
               onChange={(e) => setAdminPassword(e.target.value)}
               className="w-full px-4 py-2 bg-white border border-wd-border rounded-lg focus:ring-2 focus:ring-wd-gold/40 focus:border-wd-gold text-wd-heading placeholder-wd-charcoal/30"
-              placeholder="Minimum 6 characters"
+              placeholder="Minimum 8 characters"
               required
-              minLength={6}
+              minLength={8}
             />
             <p className="text-xs text-wd-charcoal/40 mt-1">
               You&apos;ll use this to manage your registry

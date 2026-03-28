@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (Array.isArray(body.items)) {
       items = body.items;
     } else if (body.title) {
-      items = [{ title: body.title, link: body.link, imageUrl: body.imageUrl, price: body.price, currency: body.currency, priority: body.priority, order: body.order }];
+      items = [{ title: body.title, link: body.link, imageUrl: body.imageUrl, price: body.price, currency: body.currency, priority: body.priority, order: body.order, categoryId: body.categoryId }];
     } else {
       return NextResponse.json({ error: "Items array or single item fields required" }, { status: 400 });
     }
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     const wishlistItems = await Promise.all(
       items
         .filter((item: { title?: string }) => item.title && item.title.trim())
-        .map((item: { title: string; link?: string; price?: number; currency?: string; priority?: string; imageUrl?: string }, index: number) =>
+        .map((item: { title: string; link?: string; price?: number; currency?: string; priority?: string; imageUrl?: string; categoryId?: string }, index: number) =>
           prisma.wishlistItem.create({
             data: {
               participantId: personId,
@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
               currency: item.currency || 'USD',
               priority: item.priority || 'medium',
               imageUrl: item.imageUrl || null,
+              categoryId: item.categoryId || null,
               order: index,
             },
           })

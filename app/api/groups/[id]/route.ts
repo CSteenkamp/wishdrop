@@ -26,10 +26,13 @@ export async function GET(
     const registry = await prisma.registry.findUnique({
       where: { id: registryId },
       include: {
-        _count: {
-          select: {
-            participants: true,
+        _count: { select: { participants: true } },
+        categories: { orderBy: { order: 'asc' } },
+        cashFunds: {
+          include: {
+            contributions: { select: { amount: true } },
           },
+          orderBy: { order: 'asc' },
         },
       },
     });
@@ -38,7 +41,13 @@ export async function GET(
       return NextResponse.json({ error: "Registry not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ group: registry });
+    const cashFunds = registry.cashFunds.map((fund) => ({
+      ...fund,
+      totalRaised: fund.contributions.reduce((sum, c) => sum + c.amount, 0),
+      contributorCount: fund.contributions.length,
+    }));
+
+    return NextResponse.json({ group: { ...registry, cashFunds } });
   } catch (error) {
     console.error("Error fetching registry:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -58,7 +67,12 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const { budgetAmount, budgetCurrency } = await request.json();
+    const body = await request.json();
+    const {
+      budgetAmount, budgetCurrency,
+      coupleName1, coupleName2, personalMessage,
+      description, coverImage, revealEnabled,
+    } = body;
 
     const validCurrencies = [
       'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'ZAR', 'JPY', 'CHF',
@@ -67,26 +81,27 @@ export async function PATCH(
     ];
 
     if (budgetCurrency && !validCurrencies.includes(budgetCurrency)) {
-      return NextResponse.json(
-        { error: "Invalid currency code" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid currency code" }, { status: 400 });
     }
 
     if (budgetAmount !== undefined && budgetAmount !== null && (isNaN(budgetAmount) || budgetAmount < 0)) {
-      return NextResponse.json(
-        { error: "Budget amount must be a positive number" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Budget amount must be a positive number" }, { status: 400 });
     }
+
+    const updateData: Record<string, any> = { updatedAt: new Date() };
+
+    if (budgetAmount !== undefined) updateData.budgetAmount = budgetAmount;
+    if (budgetCurrency) updateData.budgetCurrency = budgetCurrency;
+    if (coupleName1 !== undefined) updateData.coupleName1 = coupleName1?.trim() || null;
+    if (coupleName2 !== undefined) updateData.coupleName2 = coupleName2?.trim() || null;
+    if (personalMessage !== undefined) updateData.personalMessage = personalMessage?.trim() || null;
+    if (description !== undefined) updateData.description = description?.trim() || null;
+    if (coverImage !== undefined) updateData.coverImage = coverImage?.trim() || null;
+    if (revealEnabled !== undefined) updateData.revealEnabled = !!revealEnabled;
 
     const registry = await prisma.registry.update({
       where: { id: registryId },
-      data: {
-        budgetAmount: budgetAmount,
-        budgetCurrency: budgetCurrency || "USD",
-        updatedAt: new Date(),
-      },
+      data: updateData,
     });
 
     return NextResponse.json({ group: registry });

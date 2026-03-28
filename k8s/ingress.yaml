@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wishdrop-ingress
+  namespace: wishdrop
+  labels:
+    app.kubernetes.io/name: wishdrop
+  annotations:
+    # Uncomment for nginx ingress controller
+    # kubernetes.io/ingress.class: nginx
+    # nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+
+    # Uncomment for cert-manager TLS
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+
+    # IMPORTANT for Stripe webhooks: preserve raw body
+    # nginx.ingress.kubernetes.io/proxy-buffering: "off"
+spec:
+  ingressClassName: nginx  # Change to your ingress class (traefik, etc.)
+  tls:
+    - hosts:
+        - wishdrop.wagnerway.co.za
+      secretName: wishdrop-tls
+  rules:
+    - host: wishdrop.wagnerway.co.za
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wishdrop-app
+                port:
+                  number: 80

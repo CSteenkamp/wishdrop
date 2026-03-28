@@ -27,7 +27,7 @@ export const PLANS = {
   },
   unlimited: {
     name: 'Unlimited',
-    priceId: 'price_1TDAokBiNvYQF2cP1HlmIisk',
+    get priceId() { return process.env.STRIPE_PRICE_ID || ''; },
     price: '$10',
     priceUsd: '$10 USD',
     maxRegistries: Infinity,
@@ -40,7 +40,7 @@ export const PLANS = {
       'One-time payment',
     ],
   },
-} as const;
+};
 
 export type PlanType = keyof typeof PLANS;
 

@@ -24,6 +24,8 @@ const PUBLIC_API_ROUTES = [
   '/api/groups/verify',
   '/api/stripe/webhook',
   '/api/stripe/checkout',
+  '/api/registry/',
+  '/api/health',
 ];
 
 export function middleware(request: NextRequest) {
