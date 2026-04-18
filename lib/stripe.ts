@@ -2,9 +2,24 @@ import Stripe from 'stripe';
 
 let _stripe: Stripe | null = null;
 
+if (!process.env.STRIPE_SECRET_KEY) {
+  console.warn('[stripe] STRIPE_SECRET_KEY not set — Stripe features will be unavailable');
+}
+if (!process.env.STRIPE_WEBHOOK_SECRET) {
+  console.warn('[stripe] STRIPE_WEBHOOK_SECRET not set — webhook verification will fail');
+}
+if (!process.env.STRIPE_PRICE_ID) {
+  console.warn('[stripe] STRIPE_PRICE_ID not set — checkout will fail');
+}
+
 export function getStripe(): Stripe {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error(
+      'STRIPE_SECRET_KEY is not set. Cannot use Stripe features without a secret key.'
+    );
+  }
   if (!_stripe) {
-    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   }
   return _stripe;
 }

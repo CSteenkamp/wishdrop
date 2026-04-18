@@ -1,18 +1,8 @@
-import nodemailer from 'nodemailer';
+import { getTransporter, getEmailFrom } from '@/lib/mailer';
 
-function createTransporter(): nodemailer.Transporter {
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT || '587'),
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER || '',
-      pass: process.env.EMAIL_PASS || '',
-    },
-  });
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
-
-const emailFrom = () => process.env.EMAIL_FROM || 'WishDrop <noreply@localhost>';
 
 function baseTemplate(title: string, body: string): string {
   return `<!DOCTYPE html>
@@ -50,16 +40,16 @@ export async function sendItemClaimedNotification(
 ): Promise<boolean> {
   if (!ownerEmail) return false;
   try {
-    const transporter = createTransporter();
+    const transporter = getTransporter();
     const html = baseTemplate(
       'Gift Claimed!',
-      `<h2>Hi ${ownerName}!</h2>
-       <p>Great news — someone just claimed <strong>"${itemTitle}"</strong> from your <strong>${registryName}</strong> registry!</p>
+      `<h2>Hi ${escapeHtml(ownerName)}!</h2>
+       <p>Great news — someone just claimed <strong>&quot;${escapeHtml(itemTitle)}&quot;</strong> from your <strong>${escapeHtml(registryName)}</strong> registry!</p>
        <p>The surprise is safe — we won't tell you who claimed it.</p>
        <p style="color: #999; font-size: 14px; margin-top: 20px;">One less thing to worry about!</p>`
     );
     await transporter.sendMail({
-      from: emailFrom(),
+      from: getEmailFrom(),
       to: ownerEmail,
       subject: `Someone claimed "${itemTitle}" from ${registryName}!`,
       html,
@@ -79,14 +69,14 @@ export async function sendNewGuestNotification(
 ): Promise<boolean> {
   if (!adminEmail) return false;
   try {
-    const transporter = createTransporter();
+    const transporter = getTransporter();
     const html = baseTemplate(
       'New Guest Joined!',
-      `<h2>${guestName} just joined ${registryName}!</h2>
-       <p>Your registry is getting attention. <strong>${guestName}</strong> has joined and can now view and claim items.</p>`
+      `<h2>${escapeHtml(guestName)} just joined ${escapeHtml(registryName)}!</h2>
+       <p>Your registry is getting attention. <strong>${escapeHtml(guestName)}</strong> has joined and can now view and claim items.</p>`
     );
     await transporter.sendMail({
-      from: emailFrom(),
+      from: getEmailFrom(),
       to: adminEmail,
       subject: `${guestName} joined your ${registryName} registry`,
       html,
@@ -109,14 +99,14 @@ export async function sendContributionNotification(
 ): Promise<boolean> {
   if (!adminEmail) return false;
   try {
-    const transporter = createTransporter();
+    const transporter = getTransporter();
     const html = baseTemplate(
       'New Contribution!',
-      `<h2>Contribution to ${fundTitle}</h2>
-       <p><strong>${contributorName}</strong> contributed <strong>${currency} ${amount}</strong> to your <strong>${fundTitle}</strong> fund in <strong>${registryName}</strong>!</p>`
+      `<h2>Contribution to ${escapeHtml(fundTitle)}</h2>
+       <p><strong>${escapeHtml(contributorName)}</strong> contributed <strong>${escapeHtml(currency)} ${amount}</strong> to your <strong>${escapeHtml(fundTitle)}</strong> fund in <strong>${escapeHtml(registryName)}</strong>!</p>`
     );
     await transporter.sendMail({
-      from: emailFrom(),
+      from: getEmailFrom(),
       to: adminEmail,
       subject: `${contributorName} contributed to ${fundTitle}!`,
       html,

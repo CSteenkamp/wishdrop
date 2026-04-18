@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { generateLoginCode } from "@/lib/utils";
-import { hashLoginCode, getAdminSessionFromRequest } from "@/lib/auth";
+import { hashLoginCode, getAdminSessionFromRequest, getSessionFromRequest } from "@/lib/auth";
+import { enforceParticipantLimit } from "@/lib/plan-limits";
 
 // GET all participants for a registry
 export async function GET(request: NextRequest) {
@@ -46,7 +47,11 @@ export async function GET(request: NextRequest) {
 // POST create a new participant in a registry
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, groupId } = await request.json();
+    const adminSession = getAdminSessionFromRequest(request);
+    const participantSession = getSessionFromRequest(request);
+
+    const body = await request.json();
+    const { name, email, groupId, inviteCode } = body;
 
     if (!name || name.trim().length === 0) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -54,6 +59,31 @@ export async function POST(request: NextRequest) {
 
     if (!groupId) {
       return NextResponse.json({ error: "Registry ID is required" }, { status: 400 });
+    }
+
+    // Require either an admin session for this registry, a participant session for
+    // this registry, or a valid inviteCode that matches the registry.
+    const isAdmin = adminSession && adminSession.groupId === groupId;
+    const isParticipant = participantSession && participantSession.groupId === groupId;
+
+    if (!isAdmin && !isParticipant) {
+      // Allow self-registration with a valid invite code
+      if (!inviteCode) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      const registry = await prisma.registry.findUnique({
+        where: { id: groupId },
+        select: { inviteCode: true },
+      });
+      if (!registry || registry.inviteCode !== inviteCode.toUpperCase()) {
+        return NextResponse.json({ error: "Invalid invite code" }, { status: 401 });
+      }
+    }
+
+    // Enforce participant plan limits
+    const limitCheck = await enforceParticipantLimit(groupId);
+    if (!limitCheck.allowed) {
+      return NextResponse.json({ error: limitCheck.message }, { status: 403 });
     }
 
     // Validate email if provided

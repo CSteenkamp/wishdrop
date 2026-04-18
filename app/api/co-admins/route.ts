@@ -60,6 +60,14 @@ export async function DELETE(request: NextRequest) {
   const { id } = await request.json();
   if (!id) return NextResponse.json({ error: 'Co-admin id required' }, { status: 400 });
 
+  const existing = await prisma.coAdmin.findUnique({ where: { id } });
+  if (!existing) {
+    return NextResponse.json({ error: 'Co-admin not found' }, { status: 404 });
+  }
+  if (existing.registryId !== adminSession.groupId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   await prisma.coAdmin.delete({ where: { id } });
   return NextResponse.json({ success: true });
 }

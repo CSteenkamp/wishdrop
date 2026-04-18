@@ -4,7 +4,11 @@ import { cookies } from 'next/headers';
 
 const SESSION_COOKIE = 'wd_session';
 const ADMIN_SESSION_COOKIE = 'wd_admin_session';
-const SESSION_SECRET = () => process.env.MAGIC_LINK_SECRET || 'default-secret-change-in-production';
+const SESSION_SECRET = () => {
+  const secret = process.env.MAGIC_LINK_SECRET;
+  if (!secret) throw new Error('FATAL: MAGIC_LINK_SECRET environment variable is not set');
+  return secret;
+};
 const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
 
 export interface SessionData {

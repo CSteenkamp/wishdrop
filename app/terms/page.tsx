@@ -13,7 +13,7 @@ export default function TermsOfService() {
         <Link href="/" className="text-sm text-wd-gold hover:underline mb-8 inline-block">&larr; Back to Home</Link>
 
         <h1 className="text-4xl font-bold text-wd-heading font-display mb-2">Terms of Service</h1>
-        <p className="text-sm text-wd-charcoal/50 mb-10">Last updated: March 28, 2026</p>
+        <p className="text-sm text-wd-charcoal/50 mb-10">Last updated: April 16, 2026</p>
 
         <div className="prose-sm space-y-8 text-wd-charcoal/80 leading-relaxed">
 
@@ -43,11 +43,15 @@ export default function TermsOfService() {
             <h2 className="text-xl font-bold text-wd-heading mb-3">4. Gift Funds & Payments</h2>
             <p><strong>WishDrop does not process, hold, or transfer money between guests and registry owners.</strong> The cash fund feature allows guests to pledge contribution amounts. Actual payment is arranged directly between the guest and the registry owner through their preferred payment method (bank transfer, PayPal, cash, etc.).</p>
             <p className="mt-2">WishDrop bears no responsibility for pledges that are not fulfilled, payments that fail, or disputes between guests and registry owners regarding contributions.</p>
+            <p className="mt-2">WishDrop is not a payment service provider and is not regulated by the Financial Sector Conduct Authority (FSCA). The cash fund feature is a coordination tool only.</p>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-wd-heading mb-3">5. Paid Plans & Refunds</h2>
-            <p>The Unlimited plan is a one-time payment of $10 USD processed through Stripe. This payment is for access to premium features and is <strong>non-refundable</strong> except where required by applicable law.</p>
+            <p>The Unlimited plan is a one-time payment of $10 USD processed through Stripe.</p>
+            <p className="mt-2"><strong>Cooling-Off Period:</strong> In accordance with the South African Consumer Protection Act (Section 44), you may cancel your purchase within 5 business days of payment for a full refund, without providing a reason. To request a cooling-off refund, email us at <a href="mailto:2flippingeasy@gmail.com" className="text-wd-gold hover:underline">2flippingeasy@gmail.com</a> with your registry name and the email used during checkout.</p>
+            <p className="mt-2"><strong>After the cooling-off period:</strong> Refunds may be granted at our discretion for technical issues that prevent you from using the paid features. Contact us at <a href="mailto:2flippingeasy@gmail.com" className="text-wd-gold hover:underline">2flippingeasy@gmail.com</a>.</p>
+            <p className="mt-2">Upon refund, your registry will be downgraded to the Free plan immediately. Existing data will not be deleted, but features exclusive to the Unlimited plan will become inaccessible.</p>
             <p className="mt-2">WishDrop reserves the right to change pricing for future purchases. Existing purchases are not affected by price changes.</p>
           </section>
 
@@ -100,7 +104,9 @@ export default function TermsOfService() {
 
           <section>
             <h2 className="text-xl font-bold text-wd-heading mb-3">14. Contact</h2>
-            <p>For questions about these Terms, contact us at the address provided on our website.</p>
+            <p>For questions about these Terms, contact us at: <a href="mailto:2flippingeasy@gmail.com" className="text-wd-gold hover:underline">2flippingeasy@gmail.com</a></p>
+            <p className="mt-1">Flippingeasy, LLC</p>
+            <p>South Africa</p>
           </section>
 
         </div>

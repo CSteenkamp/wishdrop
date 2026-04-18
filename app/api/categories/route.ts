@@ -8,6 +8,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'registryId required' }, { status: 400 });
   }
 
+  const participantSession = getSessionFromRequest(request);
+  const adminSession = getAdminSessionFromRequest(request);
+
+  const authorised =
+    (participantSession && participantSession.groupId === registryId) ||
+    (adminSession && adminSession.groupId === registryId);
+
+  if (!authorised) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const categories = await prisma.category.findMany({
     where: { registryId },
     orderBy: { order: 'asc' },
@@ -25,6 +36,10 @@ export async function POST(request: NextRequest) {
   const { name, registryId } = await request.json();
   if (!name?.trim() || !registryId) {
     return NextResponse.json({ error: 'Name and registryId required' }, { status: 400 });
+  }
+
+  if (adminSession.groupId !== registryId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const count = await prisma.category.count({ where: { registryId } });
@@ -51,6 +66,14 @@ export async function DELETE(request: NextRequest) {
   const { id } = await request.json();
   if (!id) {
     return NextResponse.json({ error: 'Category id required' }, { status: 400 });
+  }
+
+  const existing = await prisma.category.findUnique({ where: { id } });
+  if (!existing) {
+    return NextResponse.json({ error: 'Category not found' }, { status: 404 });
+  }
+  if (existing.registryId !== adminSession.groupId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   await prisma.category.delete({ where: { id } });

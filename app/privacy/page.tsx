@@ -13,13 +13,13 @@ export default function PrivacyPolicy() {
         <Link href="/" className="text-sm text-wd-gold hover:underline mb-8 inline-block">&larr; Back to Home</Link>
 
         <h1 className="text-4xl font-bold text-wd-heading font-display mb-2">Privacy Policy</h1>
-        <p className="text-sm text-wd-charcoal/50 mb-10">Last updated: March 28, 2026</p>
+        <p className="text-sm text-wd-charcoal/50 mb-10">Last updated: April 16, 2026</p>
 
         <div className="prose-sm space-y-8 text-wd-charcoal/80 leading-relaxed">
 
           <section>
             <h2 className="text-xl font-bold text-wd-heading mb-3">1. Overview</h2>
-            <p>WishDrop (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) respects your privacy. This policy explains what data we collect, how we use it, and your rights regarding your personal information. WishDrop is operated at wishdrop.wagnerway.co.za.</p>
+            <p>WishDrop (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;), operated by Flippingeasy, LLC, respects your privacy. This policy explains what data we collect, how we use it, and your rights regarding your personal information. WishDrop is operated at wishdrop.wagnerway.co.za.</p>
           </section>
 
           <section>
@@ -90,6 +90,11 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
+            <h2 className="text-xl font-bold text-wd-heading mb-3">6b. Data Breach Notification</h2>
+            <p>In the event of a data breach that may compromise your personal information, we will notify the Information Regulator and affected individuals as required by Section 22 of the Protection of Personal Information Act (POPIA). Notification will occur as soon as reasonably possible after discovery of the breach.</p>
+          </section>
+
+          <section>
             <h2 className="text-xl font-bold text-wd-heading mb-3">7. Your Rights</h2>
             <p>Depending on your jurisdiction (including under POPIA in South Africa, GDPR in the EU, and similar laws), you may have the right to:</p>
             <ul className="list-disc pl-6 space-y-1 mt-2">
@@ -100,6 +105,10 @@ export default function PrivacyPolicy() {
               <li><strong>Object</strong> to processing of your data.</li>
             </ul>
             <p className="mt-2">To exercise these rights, contact us. We will respond within 30 days.</p>
+            <p className="mt-3"><strong>Information Officer:</strong> Christiaan Steenkamp</p>
+            <p><strong>Contact:</strong> <a href="mailto:2flippingeasy@gmail.com" className="text-wd-gold hover:underline">2flippingeasy@gmail.com</a></p>
+            <p className="mt-2">To lodge a complaint, you may also contact the Information Regulator:</p>
+            <p><strong>Website:</strong> <a href="https://inforegulator.org.za" className="text-wd-gold hover:underline" target="_blank" rel="noopener noreferrer">https://inforegulator.org.za</a></p>
           </section>
 
           <section>
@@ -129,7 +138,10 @@ export default function PrivacyPolicy() {
 
           <section>
             <h2 className="text-xl font-bold text-wd-heading mb-3">12. Contact</h2>
-            <p>For privacy-related questions or to exercise your data rights, contact us at the address provided on our website.</p>
+            <p>For privacy-related questions or to exercise your data rights, contact us at:</p>
+            <p className="mt-1"><a href="mailto:2flippingeasy@gmail.com" className="text-wd-gold hover:underline">2flippingeasy@gmail.com</a></p>
+            <p>Flippingeasy, LLC</p>
+            <p>Information Officer: Christiaan Steenkamp</p>
           </section>
 
         </div>

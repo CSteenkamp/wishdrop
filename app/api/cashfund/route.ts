@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { getAdminSessionFromRequest } from '@/lib/auth';
+import { getAdminSessionFromRequest, getSessionFromRequest } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   const registryId = request.nextUrl.searchParams.get('registryId');
   if (!registryId) {
     return NextResponse.json({ error: 'registryId required' }, { status: 400 });
+  }
+
+  const participantSession = getSessionFromRequest(request);
+  const adminSession = getAdminSessionFromRequest(request);
+
+  const authorised =
+    (participantSession && participantSession.groupId === registryId) ||
+    (adminSession && adminSession.groupId === registryId);
+
+  if (!authorised) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const funds = await prisma.cashFund.findMany({
@@ -39,6 +50,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'registryId and title required' }, { status: 400 });
   }
 
+  if (adminSession.groupId !== registryId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   const count = await prisma.cashFund.count({ where: { registryId } });
 
   const fund = await prisma.cashFund.create({
@@ -66,6 +81,14 @@ export async function PATCH(request: NextRequest) {
   const { id, paymentDetails } = await request.json();
   if (!id) return NextResponse.json({ error: 'Fund id required' }, { status: 400 });
 
+  const existing = await prisma.cashFund.findUnique({ where: { id } });
+  if (!existing) {
+    return NextResponse.json({ error: 'Fund not found' }, { status: 404 });
+  }
+  if (existing.registryId !== adminSession.groupId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   const fund = await prisma.cashFund.update({
     where: { id },
     data: { paymentDetails: paymentDetails?.trim() || null },
@@ -82,6 +105,14 @@ export async function DELETE(request: NextRequest) {
 
   const { id } = await request.json();
   if (!id) return NextResponse.json({ error: 'Fund id required' }, { status: 400 });
+
+  const existing = await prisma.cashFund.findUnique({ where: { id } });
+  if (!existing) {
+    return NextResponse.json({ error: 'Fund not found' }, { status: 404 });
+  }
+  if (existing.registryId !== adminSession.groupId) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
 
   await prisma.cashFund.delete({ where: { id } });
   return NextResponse.json({ success: true });

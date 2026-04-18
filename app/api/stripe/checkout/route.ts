@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripe, PLANS } from '@/lib/stripe';
+import { getAdminSessionFromRequest } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,6 +8,15 @@ export async function POST(request: NextRequest) {
 
     if (!groupId || !plan) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Require an authenticated admin session and verify it belongs to this registry
+    const adminSession = getAdminSessionFromRequest(request);
+    if (!adminSession) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (adminSession.groupId !== groupId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     if (plan !== 'unlimited') {

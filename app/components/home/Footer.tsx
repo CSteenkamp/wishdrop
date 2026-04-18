@@ -33,6 +33,11 @@ export default function Footer() {
               <ul className="space-y-2">
                 <li><Link href="/terms" className="text-wd-charcoal/50 hover:text-wd-gold transition-colors text-sm">Terms of Service</Link></li>
                 <li><Link href="/privacy" className="text-wd-charcoal/50 hover:text-wd-gold transition-colors text-sm">Privacy Policy</Link></li>
+                <li>
+                  <a href="mailto:2flippingeasy@gmail.com" className="text-wd-charcoal/50 hover:text-wd-gold transition-colors text-sm">
+                    Contact Us
+                  </a>
+                </li>
               </ul>
             </nav>
             <p className="text-wd-charcoal/50 text-sm mt-4">

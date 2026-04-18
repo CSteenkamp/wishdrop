@@ -40,24 +40,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    if (item.claimedById) {
-      return NextResponse.json({ error: "This item has already been claimed" }, { status: 409 });
-    }
-
     // Don't allow claiming your own items
     if (item.participantId === participantId) {
       return NextResponse.json({ error: "You cannot claim your own items" }, { status: 400 });
     }
 
-    // Claim the item
-    const updatedItem = await prisma.wishlistItem.update({
-      where: { id: itemId },
+    // Atomically claim the item only if it is still unclaimed (prevents race conditions)
+    const result = await prisma.wishlistItem.updateMany({
+      where: { id: itemId, claimedById: null },
       data: {
         claimedById: participantId,
         claimedByName: participantName,
         claimedAt: new Date(),
         claimNote: note?.trim() || null,
       },
+    });
+
+    if (result.count === 0) {
+      return NextResponse.json({ error: "Item already claimed or not found" }, { status: 409 });
+    }
+
+    // Fetch the updated item to return it in the response
+    const updatedItem = await prisma.wishlistItem.findUnique({
+      where: { id: itemId },
     });
 
     // Track analytics

@@ -1,16 +1,6 @@
-import nodemailer from 'nodemailer';
 import crypto from 'crypto';
+import { getTransporter, getEmailFrom } from '@/lib/mailer';
 
-interface EmailConfig {
-  host: string;
-  port: number;
-  secure: boolean;
-  auth: {
-    user: string;
-    pass: string;
-  };
-  from: string;
-}
 
 interface MagicLinkData {
   personId: string;
@@ -19,25 +9,15 @@ interface MagicLinkData {
   expires: number;
 }
 
-// Create email transporter
-function createTransporter(): nodemailer.Transporter {
-  const config: EmailConfig = {
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT || '587'),
-    secure: false,
-    auth: {
-      user: process.env.EMAIL_USER || '',
-      pass: process.env.EMAIL_PASS || '',
-    },
-    from: process.env.EMAIL_FROM || 'WishDrop <noreply@localhost>',
-  };
-
-  return nodemailer.createTransport(config);
+function getSecret(): string {
+  const secret = process.env.MAGIC_LINK_SECRET;
+  if (!secret) throw new Error('FATAL: MAGIC_LINK_SECRET environment variable is not set');
+  return secret;
 }
 
 // Generate magic link token
 export function generateMagicToken(data: MagicLinkData): string {
-  const secret = process.env.MAGIC_LINK_SECRET || 'default-secret-change-in-production';
+  const secret = getSecret();
   const expiresMinutes = parseInt(process.env.MAGIC_LINK_EXPIRES_MINUTES || '15');
   const expires = Date.now() + (expiresMinutes * 60 * 1000);
 
@@ -58,7 +38,7 @@ export function generateMagicToken(data: MagicLinkData): string {
 // Verify magic link token
 export function verifyMagicToken(token: string): MagicLinkData | null {
   try {
-    const secret = process.env.MAGIC_LINK_SECRET || 'default-secret-change-in-production';
+    const secret = getSecret();
     const decoded = JSON.parse(Buffer.from(token, 'base64url').toString());
     const { payload, signature } = decoded;
 
@@ -67,7 +47,9 @@ export function verifyMagicToken(token: string): MagicLinkData | null {
       .update(payload)
       .digest('hex');
 
-    if (signature !== expectedSignature) {
+    const sigBuffer = Buffer.from(signature, 'hex');
+    const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+    if (sigBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
       return null;
     }
 
@@ -91,7 +73,7 @@ export async function sendMagicLinkEmail(
   magicLink: string
 ): Promise<boolean> {
   try {
-    const transporter = createTransporter();
+    const transporter = getTransporter();
 
     const htmlContent = `
 <!DOCTYPE html>
@@ -166,7 +148,7 @@ Sent from WishDrop — The free gift registry for every occasion
 `;
 
     await transporter.sendMail({
-      from: process.env.EMAIL_FROM || 'WishDrop <noreply@localhost>',
+      from: getEmailFrom(),
       to: email,
       subject: `🎁 Your WishDrop Login Link - ${registryName}`,
       text: textContent,
@@ -183,7 +165,7 @@ Sent from WishDrop — The free gift registry for every occasion
 // Test email configuration
 export async function testEmailConfig(): Promise<boolean> {
   try {
-    const transporter = createTransporter();
+    const transporter = getTransporter();
     await transporter.verify();
     return true;
   } catch (error) {
